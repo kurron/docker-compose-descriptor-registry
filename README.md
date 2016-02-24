@@ -6,6 +6,8 @@ and that deployment tools, such as [Rundeck](http://rundeck.org/), will
 use the descriptor to publish to a scheduler that understand Docker Compose
 files, such as [AWS ECS](https://aws.amazon.com/ecs/).
 
+![Sequence Diagram](sequence-diagram.jpg "Sequence Diagram")
+
 # Prerequisites
 
 * [JDK 8](http://www.oracle.com/technetwork/java/index.html) installed and working
