@@ -1,10 +1,10 @@
 # turn on the banner and disable groovy templating
 spring:
-  main:
-    banner-mode: console
-  groovy:
-    template:
-      check-template-location: false
+    main:
+        banner-mode: console
+    groovy:
+        template:
+            check-template-location: false
 
 management:
     context-path: /operations
