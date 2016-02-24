@@ -17,6 +17,7 @@
 package org.kurron.dcr.inbound
 
 import com.fasterxml.jackson.annotation.JsonProperty
+import javax.validation.constraints.NotNull
 import org.springframework.hateoas.ResourceSupport
 
 /**
@@ -42,8 +43,15 @@ class HypermediaControl extends ResourceSupport {
     String timestamp
 
     /**
-     * relative path of the completed service, response-only.
+     * Relative path of the completed service, response-only.
      */
     @JsonProperty( 'path' )
     String path
+
+    /**
+     * The Base 64 encoded Docker Compose fragment.
+     */
+    @JsonProperty( 'fragment' )
+    @NotNull
+    String fragment
 }

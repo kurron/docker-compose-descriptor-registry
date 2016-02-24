@@ -20,7 +20,7 @@ import static org.kurron.dcr.inbound.HypermediaControl.MIME_TYPE
 import static org.springframework.web.bind.annotation.RequestMethod.PUT
 import javax.validation.Valid
 import org.springframework.http.ResponseEntity
-import org.springframework.validation.BindingResult
+import org.springframework.web.bind.annotation.RequestBody
 import org.springframework.web.bind.annotation.RequestMapping
 import org.springframework.web.bind.annotation.RestController
 
@@ -32,10 +32,7 @@ import org.springframework.web.bind.annotation.RestController
 class FragmentGateway {
 
     @RequestMapping( method = [PUT] )
-    ResponseEntity<HypermediaControl> addFragment( @Valid HypermediaControl input, BindingResult result ) {
-        if ( result.hasErrors() ) {
-            //TODO: do something clever
-        }
+    ResponseEntity<HypermediaControl> addFragment( @RequestBody @Valid HypermediaControl input ) {
         ResponseEntity.ok( new HypermediaControl( ) )
     }
 }
