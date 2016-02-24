@@ -26,25 +26,25 @@ import org.springframework.web.bind.annotation.RestController
  * Inbound HTTP gateway that supports the Docker Compose descriptor resource.
  **/
 @RestController
-@RequestMapping( '/descriptor' )
+@RequestMapping( path = '/descriptor', consumes = [MIME_TYPE], produces = [MIME_TYPE] )
 class DescriptorGateway {
 
-    @RequestMapping( path = '/application', consumes = [MIME_TYPE], produces = [MIME_TYPE], method = [RequestMethod.GET] )
+    @RequestMapping( path = '/application', method = [RequestMethod.GET] )
     ResponseEntity<HypermediaControl> fetchApplicationList() {
         ResponseEntity.ok( new HypermediaControl( ) )
     }
 
-    @RequestMapping( path = '/application/{release}', consumes = [MIME_TYPE], produces = [MIME_TYPE], method = [RequestMethod.GET] )
+    @RequestMapping( path = '/application/{release}', method = [RequestMethod.GET] )
     ResponseEntity<HypermediaControl> fetchReleasesList() {
         ResponseEntity.ok( new HypermediaControl( ) )
     }
 
-    @RequestMapping( path = '/application/{release}/{version}', consumes = [MIME_TYPE], produces = [MIME_TYPE], method = [RequestMethod.GET] )
+    @RequestMapping( path = '/application/{release}/{version}', method = [RequestMethod.GET] )
     ResponseEntity<HypermediaControl> fetchVersionList() {
         ResponseEntity.ok( new HypermediaControl( ) )
     }
 
-    @RequestMapping( path = '/{id}', consumes = [MIME_TYPE], produces = [MIME_TYPE], method = [RequestMethod.GET] )
+    @RequestMapping( path = '/{id}', method = [RequestMethod.GET] )
     ResponseEntity<HypermediaControl> fetchDescriptor() {
         ResponseEntity.ok( new HypermediaControl( ) )
     }
