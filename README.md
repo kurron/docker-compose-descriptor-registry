@@ -6,7 +6,7 @@ and that deployment tools, such as [Rundeck](http://rundeck.org/), will
 use the descriptor to publish to a scheduler that understand Docker Compose
 files, such as [AWS ECS](https://aws.amazon.com/ecs/).
 
-![Sequence Diagram](sequence-diagram.jpg "Sequence Diagram")
+![Sequence Diagram](sequence-diagram.png "Sequence Diagram")
 
 # Prerequisites
 
