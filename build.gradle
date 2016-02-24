@@ -24,7 +24,7 @@ buildscript {
     }
 }
 
-description = 'Bare bones example REST micro-service'
+description = 'Stores and assembles Docker Compose fragments'
 group = 'org.kurron'
 
 ext.coverageExcludes = []
