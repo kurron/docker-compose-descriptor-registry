@@ -18,7 +18,9 @@ package org.kurron.dcr.inbound
 
 import static org.kurron.dcr.inbound.HypermediaControl.MIME_TYPE
 import static org.springframework.web.bind.annotation.RequestMethod.PUT
+import java.time.Clock
 import javax.validation.Valid
+import org.springframework.http.HttpStatus
 import org.springframework.http.ResponseEntity
 import org.springframework.web.bind.annotation.RequestBody
 import org.springframework.web.bind.annotation.RequestMapping
@@ -33,6 +35,7 @@ class FragmentGateway {
 
     @RequestMapping( method = [PUT] )
     ResponseEntity<HypermediaControl> addFragment( @RequestBody @Valid HypermediaControl input ) {
-        ResponseEntity.ok( new HypermediaControl( ) )
+        def control = new HypermediaControl( status: HttpStatus.OK.value(), timestamp: Clock.systemDefaultZone().instant() )
+        ResponseEntity.ok( control )
     }
 }

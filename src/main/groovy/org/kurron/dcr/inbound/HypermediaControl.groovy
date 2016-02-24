@@ -17,12 +17,14 @@
 package org.kurron.dcr.inbound
 
 import com.fasterxml.jackson.annotation.JsonProperty
+import groovy.transform.Canonical
 import javax.validation.constraints.NotNull
 import org.springframework.hateoas.ResourceSupport
 
 /**
  * The hypermedia object returned by all services.
  **/
+@Canonical
 class HypermediaControl extends ResourceSupport {
 
     /**
