@@ -1,0 +1,11 @@
+<component name="libraryTable">
+  <library name="Gradle: org.codehaus.btm:btm:2.1.4">
+    <CLASSES>
+      <root url="jar://$USER_HOME$/.gradle/caches/modules-2/files-2.1/org.codehaus.btm/btm/2.1.4/6242dc75982b4342442e30aaa504def605453d52/btm-2.1.4.jar!/" />
+    </CLASSES>
+    <JAVADOC />
+    <SOURCES>
+      <root url="jar://$USER_HOME$/.gradle/caches/modules-2/files-2.1/org.codehaus.btm/btm/2.1.4/7b7573f117aefe13b8882f0c5f7f11f5d720c2aa/btm-2.1.4-sources.jar!/" />
+    </SOURCES>
+  </library>
+</component>

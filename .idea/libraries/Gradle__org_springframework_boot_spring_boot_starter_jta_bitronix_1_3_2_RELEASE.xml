@@ -1,0 +1,11 @@
+<component name="libraryTable">
+  <library name="Gradle: org.springframework.boot:spring-boot-starter-jta-bitronix:1.3.2.RELEASE">
+    <CLASSES>
+      <root url="jar://$USER_HOME$/.gradle/caches/modules-2/files-2.1/org.springframework.boot/spring-boot-starter-jta-bitronix/1.3.2.RELEASE/a3b63b077dde2a9b26979eff1c72afab903d9c76/spring-boot-starter-jta-bitronix-1.3.2.RELEASE.jar!/" />
+    </CLASSES>
+    <JAVADOC />
+    <SOURCES>
+      <root url="jar://$USER_HOME$/.gradle/caches/modules-2/files-2.1/org.springframework.boot/spring-boot-starter-jta-bitronix/1.3.2.RELEASE/e96a80c21065ba2c56474ee7af84be70550c1016/spring-boot-starter-jta-bitronix-1.3.2.RELEASE-sources.jar!/" />
+    </SOURCES>
+  </library>
+</component>
