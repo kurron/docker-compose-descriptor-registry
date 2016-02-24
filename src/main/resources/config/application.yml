@@ -39,7 +39,7 @@ security:
     realm: dcr
 
 # app specific properties
-example:
+dcr:
   foo: default
 
 #---------- profile specific overrides ----------#
@@ -47,5 +47,5 @@ example:
 ---
 spring:
   profiles: bamboo
-example:
+dcr:
   foo: bamboo
