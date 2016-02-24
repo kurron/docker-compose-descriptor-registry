@@ -16,6 +16,7 @@
 
 package org.kurron.dcr.inbound
 
+import com.fasterxml.jackson.annotation.JsonProperty
 import org.springframework.hateoas.ResourceSupport
 
 /**
@@ -27,4 +28,22 @@ class HypermediaControl extends ResourceSupport {
      * The MIME-TYPE of the control.
      */
     static final String MIME_TYPE = 'application/hal+json'
+
+    /**
+     * HTTP status of the service, response-only.
+     */
+    @JsonProperty( 'status' )
+    Integer status
+
+    /**
+     * ISO 8601 timestamp of when the service completed, response-only.
+     */
+    @JsonProperty( 'timestamp' )
+    String timestamp
+
+    /**
+     * relative path of the completed service, response-only.
+     */
+    @JsonProperty( 'path' )
+    String path
 }

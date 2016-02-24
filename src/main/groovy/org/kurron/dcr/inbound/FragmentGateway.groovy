@@ -18,7 +18,9 @@ package org.kurron.dcr.inbound
 
 import static org.kurron.dcr.inbound.HypermediaControl.MIME_TYPE
 import static org.springframework.web.bind.annotation.RequestMethod.PUT
+import javax.validation.Valid
 import org.springframework.http.ResponseEntity
+import org.springframework.validation.BindingResult
 import org.springframework.web.bind.annotation.RequestMapping
 import org.springframework.web.bind.annotation.RestController
 
@@ -26,11 +28,14 @@ import org.springframework.web.bind.annotation.RestController
  * Inbound HTTP gateway that supports the Docker Compose fragment resource.
  **/
 @RestController
-@RequestMapping( '/fragment' )
+@RequestMapping( path = '/fragment', consumes = [MIME_TYPE], produces = [MIME_TYPE] )
 class FragmentGateway {
 
-    @RequestMapping( consumes = [MIME_TYPE], produces = [MIME_TYPE], method = [PUT] )
-    ResponseEntity<HypermediaControl> addFragment() {
+    @RequestMapping( method = [PUT] )
+    ResponseEntity<HypermediaControl> addFragment( @Valid HypermediaControl input, BindingResult result ) {
+        if ( result.hasErrors() ) {
+            //TODO: do something clever
+        }
         ResponseEntity.ok( new HypermediaControl( ) )
     }
 }

@@ -5,6 +5,10 @@ spring:
     groovy:
         template:
             check-template-location: false
+    jackson:
+        serialization:
+            indent_output: true
+        serialization-inclusion: non_null
 
 management:
     context-path: /operations
