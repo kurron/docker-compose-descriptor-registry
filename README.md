@@ -1,5 +1,10 @@
 # Overview
-This project ... 
+This project is a simple service that manages Docker Compose fragments from 
+individual projects, assembling them into a single descriptor.  The intent 
+is that CI servers will publish fragments at the end of a successful build 
+and that deployment tools, such as [Rundeck](http://rundeck.org/), will 
+use the descriptor to publish to a scheduler that understand Docker Compose
+files, such as [AWS ECS](https://aws.amazon.com/ecs/).
 
 # Prerequisites
 
