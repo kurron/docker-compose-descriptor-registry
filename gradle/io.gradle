@@ -15,12 +15,12 @@
  */
 
 dependencies {
-    compile('org.activiti:activiti-spring-boot-starter-basic:5.19.0')
+//    compile('org.activiti:activiti-spring-boot-starter-basic:5.19.0')
     compile('org.springframework.boot:spring-boot-starter-amqp')
-    compile('org.springframework.boot:spring-boot-starter-artemis')
-    compile('org.springframework.boot:spring-boot-starter-batch')
-    compile('org.springframework.boot:spring-boot-starter-hornetq')
-    compile('org.springframework.boot:spring-boot-starter-integration')
-    compile('org.springframework.boot:spring-boot-starter-mail')
+//    compile('org.springframework.boot:spring-boot-starter-artemis')
+//    compile('org.springframework.boot:spring-boot-starter-batch')
+//    compile('org.springframework.boot:spring-boot-starter-hornetq')
+//    compile('org.springframework.boot:spring-boot-starter-integration')
+//    compile('org.springframework.boot:spring-boot-starter-mail')
     testCompile('org.springframework.boot:spring-boot-starter-test')
 }

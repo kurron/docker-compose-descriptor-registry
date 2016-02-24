@@ -32,8 +32,8 @@ info:
 # Override the default security properties, defined in org.springframework.boot.autoconfigure.security.SecurityProperties
 security:
   user:
-    name: developer
-    password: developer
+    name: operations
+    password: operations
   basic:
     enabled: false
     realm: dcr
