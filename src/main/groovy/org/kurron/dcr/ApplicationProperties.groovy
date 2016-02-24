@@ -14,14 +14,14 @@
  * limitations under the License.
  */
 
-package org.kurron.example
+package org.kurron.dcr
 
 import org.springframework.boot.context.properties.ConfigurationProperties
 
 /**
  * Custom configuration properties that are driven by Spring Boot and its application.yml file.
  */
-@ConfigurationProperties( value = 'example', ignoreUnknownFields = false )
+@ConfigurationProperties( value = 'dcr', ignoreUnknownFields = false )
 class ApplicationProperties {
 
     /**

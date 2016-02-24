@@ -36,7 +36,7 @@ security:
     password: developer
   basic:
     enabled: false
-    realm: example
+    realm: dcr
 
 # app specific properties
 example:

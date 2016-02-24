@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package org.kurron.example
+package org.kurron.dcr
 
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.test.SpringApplicationContextLoader

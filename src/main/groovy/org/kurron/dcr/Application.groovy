@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package org.kurron.example
+package org.kurron.dcr
 
 import groovy.util.logging.Slf4j
 import org.springframework.boot.SpringApplication
