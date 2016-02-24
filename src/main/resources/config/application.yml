@@ -1,4 +1,4 @@
-# turn on the banner and disable groovy templating
+---
 spring:
     main:
         banner-mode: console
