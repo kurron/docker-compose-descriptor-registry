@@ -19,6 +19,7 @@ package org.kurron.dcr.inbound
 import com.fasterxml.jackson.annotation.JsonProperty
 import groovy.transform.Canonical
 import javax.validation.constraints.NotNull
+import org.hibernate.validator.constraints.NotEmpty
 import org.springframework.hateoas.ResourceSupport
 
 /**
@@ -51,9 +52,38 @@ class HypermediaControl extends ResourceSupport {
     String path
 
     /**
-     * The Base 64 encoded Docker Compose fragment.
+     * Input only, the Base 64 encoded Docker Compose fragment.
      */
     @JsonProperty( 'fragment' )
     @NotNull
     String fragment
+
+    /**
+     * As input, the collection of applications this fragment should be associated with. As output, the collection of all available applications.
+     */
+    @JsonProperty( 'applications' )
+    @NotNull
+    @NotEmpty
+    List<String> applications
+
+    /**
+     * As input, the single release the fragment should be associated with. As output, the collection of all available releases.
+     */
+    @JsonProperty( 'releases' )
+    @NotNull
+    List<String> releases
+
+    /**
+     * As input, the single version the fragment should be associated with. As output, the collection of all available versions.
+     */
+    @JsonProperty( 'versions' )
+    @NotNull
+    List<String> versions
+
+    /**
+     * Output only, the Base 64 encoded Docker Compose descriptor.
+     */
+    @JsonProperty( 'descriptor' )
+    String descriptor
+
 }

@@ -17,6 +17,8 @@
 package org.kurron.dcr.inbound
 
 import static org.kurron.dcr.inbound.HypermediaControl.MIME_TYPE
+import java.time.Clock
+import org.springframework.http.HttpStatus
 import org.springframework.http.ResponseEntity
 import org.springframework.web.bind.annotation.RequestMapping
 import org.springframework.web.bind.annotation.RequestMethod
@@ -26,26 +28,29 @@ import org.springframework.web.bind.annotation.RestController
  * Inbound HTTP gateway that supports the Docker Compose descriptor resource.
  **/
 @RestController
-@RequestMapping( path = '/descriptor', consumes = [MIME_TYPE], produces = [MIME_TYPE] )
+@RequestMapping( path = '/descriptor' )
 class DescriptorGateway {
 
-    @RequestMapping( path = '/application', method = [RequestMethod.GET] )
+    @RequestMapping( path = '/application', method = [RequestMethod.GET], consumes = [MIME_TYPE], produces = [MIME_TYPE] )
     ResponseEntity<HypermediaControl> fetchApplicationList() {
         ResponseEntity.ok( new HypermediaControl( ) )
     }
 
-    @RequestMapping( path = '/application/{release}', method = [RequestMethod.GET] )
+    @RequestMapping( path = '/application/{release}', method = [RequestMethod.GET],  consumes = [MIME_TYPE], produces = [MIME_TYPE] )
     ResponseEntity<HypermediaControl> fetchReleasesList() {
         ResponseEntity.ok( new HypermediaControl( ) )
     }
 
-    @RequestMapping( path = '/application/{release}/{version}', method = [RequestMethod.GET] )
+    @RequestMapping( path = '/application/{release}/{version}', method = [RequestMethod.GET],  consumes = [MIME_TYPE], produces = [MIME_TYPE] )
     ResponseEntity<HypermediaControl> fetchVersionList() {
         ResponseEntity.ok( new HypermediaControl( ) )
     }
 
-    @RequestMapping( path = '/{id}', method = [RequestMethod.GET] )
+    @RequestMapping( path = '/{id}', method = [RequestMethod.GET], produces = [MIME_TYPE]  )
     ResponseEntity<HypermediaControl> fetchDescriptor() {
-        ResponseEntity.ok( new HypermediaControl( ) )
+        def control = new HypermediaControl( status: HttpStatus.OK.value(),
+                                             timestamp: Clock.systemDefaultZone().instant(),
+                                             descriptor: 'some base64 encoded descriptor' )
+        ResponseEntity.ok( control )
     }
 }
