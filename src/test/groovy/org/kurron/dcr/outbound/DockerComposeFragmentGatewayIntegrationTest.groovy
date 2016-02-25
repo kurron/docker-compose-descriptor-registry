@@ -23,6 +23,7 @@ import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.test.SpringApplicationContextLoader
 import org.springframework.boot.test.WebIntegrationTest
 import org.springframework.data.mongodb.core.MongoOperations
+import org.springframework.data.mongodb.core.query.Query
 import org.springframework.test.context.ContextConfiguration
 import spock.lang.Specification
 
@@ -41,7 +42,9 @@ class DockerComposeFragmentGatewayIntegrationTest extends Specification implemen
 
     def setup() {
         assert template
-        template.collectionNames.each { template.dropCollection( it ) }
+        template.collectionNames.findAll { !it.startsWith( 'system.' ) }.each {
+            template.remove( new Query(), it )
+        }
     }
 
     def 'verify crud methods'() {
@@ -61,6 +64,7 @@ class DockerComposeFragmentGatewayIntegrationTest extends Specification implemen
     }
 
     def possibleApplications = [ randomHexString(), randomHexString(), randomHexString()].sort( false )
+    def possibleReleases = [ randomHexString(), randomHexString(), randomHexString()].sort( false )
 
     def 'verify distinct application retrieval'() {
         given: 'the gateway was injected'
@@ -80,4 +84,21 @@ class DockerComposeFragmentGatewayIntegrationTest extends Specification implemen
         distinct == possibleApplications
     }
 
+    def 'verify distinct release retrieval'() {
+        given: 'the gateway was injected'
+        sut
+
+        when: 'we insert multiple documents'
+        def toSave = (1..100).collect {
+            new DockerComposeFragment( release: randomElement( possibleReleases ) as String,
+                                       version: randomHexString(),
+                                       applications: (1..2).collect { randomElement( possibleApplications ) as String },
+                                       fragment: randomByteArray( 8 ) )
+        }
+        sut.save( toSave )
+
+        then: 'we can read out the distinct release values'
+        def distinct = sut.distinctReleases( toSave.first().applications.first() ).sort( false )
+        distinct == possibleReleases
+    }
 }

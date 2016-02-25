@@ -21,5 +21,16 @@ package org.kurron.dcr.outbound
  **/
 interface DockerComposeFragmentGatewayExtension {
 
+    /**
+     * Constructs a collection of the distinct applications associated with the various fragments in the database.
+     * @return a collection of distinct applications.
+     */
     List<String> distinctApplications()
+
+    /**
+     * Constructs a collection of the distinct releases associated with a particular application.
+     * @param application the application name to query against.
+     * @return a collection of distinct applications.
+     */
+    List<String> distinctReleases( String application )
 }

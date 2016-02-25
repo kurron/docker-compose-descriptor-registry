@@ -19,6 +19,8 @@ package org.kurron.dcr.outbound
 import org.kurron.dcr.DockerComposeFragment
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.data.mongodb.core.MongoOperations
+import org.springframework.data.mongodb.core.query.Criteria
+import org.springframework.data.mongodb.core.query.Query
 
 /**
  * Implementation of the custom repository logic.
@@ -32,5 +34,10 @@ class DockerComposeFragmentGatewayImpl implements DockerComposeFragmentGatewayEx
     @Override
     List<String> distinctApplications() {
         theTemplate.getCollection( theTemplate.getCollectionName( DockerComposeFragment ) ).distinct( 'applications' )
+    }
+
+    @Override
+    List<String> distinctReleases( final String application ) {
+        theTemplate.find( Query.query( Criteria.where( 'applications' ).is( application ) ), DockerComposeFragment ).collect { it.release }.unique( false )
     }
 }
