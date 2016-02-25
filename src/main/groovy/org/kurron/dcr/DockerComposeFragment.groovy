@@ -16,6 +16,7 @@
 
 package org.kurron.dcr
 
+import groovy.transform.Canonical
 import org.bson.types.ObjectId
 import org.springframework.data.annotation.Id
 import org.springframework.data.mongodb.core.index.Indexed
@@ -24,6 +25,7 @@ import org.springframework.data.mongodb.core.mapping.Document
 /**
  * A MongoDB document that stores individual Docker Compose fragments.
  **/
+@Canonical
 @Document
 class DockerComposeFragment {
 
@@ -47,6 +49,7 @@ class DockerComposeFragment {
     /**
      * The version of the fragment, eg module-1.2.3.RELEASE.
      */
+    @Indexed
     String version
 
     /**

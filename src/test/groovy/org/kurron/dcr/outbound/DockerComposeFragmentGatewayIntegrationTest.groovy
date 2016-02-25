@@ -122,4 +122,29 @@ class DockerComposeFragmentGatewayIntegrationTest extends Specification implemen
         def distinct = sut.distinctVersions( first.applications.first(), first.release ).sort( false )
         distinct == possibleVersions
     }
+
+    def 'verify findOne'() {
+        given: 'the gateway was injected'
+        sut
+
+        when: 'we insert multiple documents'
+        def toSave = (1..10).collect {
+            new DockerComposeFragment( release: randomElement( possibleReleases ) as String,
+                                       version: randomElement( possibleVersions ) as String,
+                                       applications: (1..2).collect { randomElement( possibleApplications ) as String },
+                                       fragment: randomByteArray( 8 ) )
+        }
+        // scrub the first one so that there is only one of its type is in the db
+        toSave.first().with {
+            release = 'release'
+            version = 'version'
+            applications = ['a','b','c']
+        }
+        sut.save( toSave )
+
+        then: 'we can read out the specific document'
+        def first = toSave.first()
+        def found = sut.findOne( first.applications.first(), first.release, first.version )
+        found == first
+    }
 }

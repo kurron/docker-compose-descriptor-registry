@@ -16,6 +16,8 @@
 
 package org.kurron.dcr.outbound
 
+import org.kurron.dcr.DockerComposeFragment
+
 /**
  * Custom repository extension.
  **/
@@ -41,4 +43,13 @@ interface DockerComposeFragmentGatewayExtension {
      * @return a collection of distinct versions.
      */
     List<String> distinctVersions( String application, String release )
+
+    /**
+     * Loads the specific fragment fro, the database.
+     * @param application the application name to query against.
+     * @param release the release name to query against.
+     * @param version the version to query against.
+     * @return the loaded instance.
+     */
+    DockerComposeFragment findOne( String application, String release, String version )
 }
