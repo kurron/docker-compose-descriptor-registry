@@ -30,7 +30,15 @@ interface DockerComposeFragmentGatewayExtension {
     /**
      * Constructs a collection of the distinct releases associated with a particular application.
      * @param application the application name to query against.
-     * @return a collection of distinct applications.
+     * @return a collection of distinct releases.
      */
     List<String> distinctReleases( String application )
+
+    /**
+     * Constructs a collection of the distinct versions associated with a particular application and release.
+     * @param application the application name to query against.
+     * @param release the release name to query against.
+     * @return a collection of distinct versions.
+     */
+    List<String> distinctVersions( String application, String release )
 }

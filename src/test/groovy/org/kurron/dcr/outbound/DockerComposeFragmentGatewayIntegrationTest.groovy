@@ -65,6 +65,7 @@ class DockerComposeFragmentGatewayIntegrationTest extends Specification implemen
 
     def possibleApplications = [ randomHexString(), randomHexString(), randomHexString()].sort( false )
     def possibleReleases = [ randomHexString(), randomHexString(), randomHexString()].sort( false )
+    def possibleVersions = [ randomHexString(), randomHexString(), randomHexString()].sort( false )
 
     def 'verify distinct application retrieval'() {
         given: 'the gateway was injected'
@@ -100,5 +101,25 @@ class DockerComposeFragmentGatewayIntegrationTest extends Specification implemen
         then: 'we can read out the distinct release values'
         def distinct = sut.distinctReleases( toSave.first().applications.first() ).sort( false )
         distinct == possibleReleases
+    }
+
+    def 'verify distinct version retrieval'() {
+        given: 'the gateway was injected'
+        sut
+
+        when: 'we insert multiple documents'
+        def toSave = (1..100).collect {
+            new DockerComposeFragment( release: randomElement( possibleReleases ) as String,
+                                       version: randomElement( possibleVersions ) as String,
+                                       applications: (1..2).collect { randomElement( possibleApplications ) as String },
+                                       fragment: randomByteArray( 8 ) )
+        }
+        sut.save( toSave )
+
+        then: 'we can read out the distinct version values'
+
+        def first = toSave.first()
+        def distinct = sut.distinctVersions( first.applications.first(), first.release ).sort( false )
+        distinct == possibleVersions
     }
 }

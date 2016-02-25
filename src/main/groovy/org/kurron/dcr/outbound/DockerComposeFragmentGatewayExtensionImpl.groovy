@@ -40,4 +40,9 @@ class DockerComposeFragmentGatewayImpl implements DockerComposeFragmentGatewayEx
     List<String> distinctReleases( final String application ) {
         theTemplate.find( Query.query( Criteria.where( 'applications' ).is( application ) ), DockerComposeFragment ).collect { it.release }.unique( false )
     }
+
+    @Override
+    List<String> distinctVersions( final String application, final String release ) {
+        theTemplate.find( Query.query( Criteria.where( 'applications' ).is( application ).and( 'release' ).is( release ) ), DockerComposeFragment ).collect { it.version }.unique( false )
+    }
 }
