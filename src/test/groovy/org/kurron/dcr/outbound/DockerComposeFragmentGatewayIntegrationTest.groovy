@@ -18,6 +18,7 @@ package org.kurron.dcr.outbound
 
 import org.kurron.dcr.Application
 import org.kurron.dcr.DockerComposeFragment
+import org.kurron.traits.GenerationAbility
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.test.SpringApplicationContextLoader
 import org.springframework.boot.test.WebIntegrationTest
@@ -29,7 +30,7 @@ import spock.lang.Specification
  */
 @WebIntegrationTest( randomPort = true )
 @ContextConfiguration( classes = Application, loader = SpringApplicationContextLoader )
-class DockerComposeFragmentGatewayIntegrationTest extends Specification {
+class DockerComposeFragmentGatewayIntegrationTest extends Specification implements GenerationAbility {
 
     @Autowired
     DockerComposeFragmentGateway sut
@@ -39,10 +40,10 @@ class DockerComposeFragmentGatewayIntegrationTest extends Specification {
         sut
 
         when: 'we insert a document'
-        def toSave = new DockerComposeFragment( release: 'release',
-                                                version: 'version',
-                                                applications: ['a','b','c'],
-                                                fragment: new byte[8] )
+        def toSave = new DockerComposeFragment( release: randomHexString(),
+                                                version: randomHexString(),
+                                                applications: (1..3).collect { randomHexString() },
+                                                fragment: randomByteArray( 8 ) )
         DockerComposeFragment saved = sut.save( toSave )
 
         then: 'we can read it back out'
