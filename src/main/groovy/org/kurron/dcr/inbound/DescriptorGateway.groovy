@@ -49,7 +49,7 @@ class DescriptorGateway {
     @RequestMapping( path = '/{id}', method = [RequestMethod.GET], produces = [MIME_TYPE]  )
     ResponseEntity<HypermediaControl> fetchDescriptor() {
         def control = new HypermediaControl( status: HttpStatus.OK.value(),
-                                             timestamp: Clock.systemDefaultZone().instant(),
+                                             timestamp: Clock.systemDefaultZone().instant() as String,
                                              descriptor: 'some base64 encoded descriptor' )
         ResponseEntity.ok( control )
     }

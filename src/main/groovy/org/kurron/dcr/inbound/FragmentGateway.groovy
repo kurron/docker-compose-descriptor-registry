@@ -35,7 +35,7 @@ class FragmentGateway {
 
     @RequestMapping( method = [PUT] )
     ResponseEntity<HypermediaControl> addFragment( @RequestBody @Valid HypermediaControl input ) {
-        def control = new HypermediaControl( status: HttpStatus.OK.value(), timestamp: Clock.systemDefaultZone().instant() )
+        def control = new HypermediaControl( status: HttpStatus.OK.value(), timestamp: Clock.systemDefaultZone().instant() as String )
         ResponseEntity.ok( control )
     }
 }
