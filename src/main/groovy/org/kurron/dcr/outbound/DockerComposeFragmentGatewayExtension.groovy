@@ -16,13 +16,10 @@
 
 package org.kurron.dcr.outbound
 
-import org.bson.types.ObjectId
-import org.kurron.dcr.DockerComposeFragment
-import org.springframework.data.repository.PagingAndSortingRepository
-
 /**
- * Outbound gateway that knows how to interact with the persistence store.
+ * Custom repository extension.
  **/
-interface DockerComposeFragmentGateway extends PagingAndSortingRepository<DockerComposeFragment, ObjectId>, DockerComposeFragmentGatewayExtension {
+interface DockerComposeFragmentGatewayExtension {
 
+    List<String> distinctApplications()
 }

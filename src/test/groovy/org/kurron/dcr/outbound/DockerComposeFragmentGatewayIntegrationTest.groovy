@@ -22,6 +22,7 @@ import org.kurron.traits.GenerationAbility
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.test.SpringApplicationContextLoader
 import org.springframework.boot.test.WebIntegrationTest
+import org.springframework.data.mongodb.core.MongoOperations
 import org.springframework.test.context.ContextConfiguration
 import spock.lang.Specification
 
@@ -33,7 +34,15 @@ import spock.lang.Specification
 class DockerComposeFragmentGatewayIntegrationTest extends Specification implements GenerationAbility {
 
     @Autowired
+    MongoOperations template
+
+    @Autowired
     DockerComposeFragmentGateway sut
+
+    def setup() {
+        assert template
+        template.collectionNames.each { template.dropCollection( it ) }
+    }
 
     def 'verify crud methods'() {
         given: 'the gateway was injected'
@@ -50,4 +59,25 @@ class DockerComposeFragmentGatewayIntegrationTest extends Specification implemen
         DockerComposeFragment read = sut.findOne( saved.id )
         read
     }
+
+    def possibleApplications = [ randomHexString(), randomHexString(), randomHexString()].sort( false )
+
+    def 'verify distinct application retrieval'() {
+        given: 'the gateway was injected'
+        sut
+
+        when: 'we insert multiple documents'
+        def toSave = (1..100).collect {
+            new DockerComposeFragment( release: randomHexString(),
+                                       version: randomHexString(),
+                                       applications: (1..2).collect { randomElement( possibleApplications ) as String },
+                                       fragment: randomByteArray( 8 ) )
+        }
+        sut.save( toSave )
+
+        then: 'we can read out the distinct application values'
+        def distinct = sut.distinctApplications().sort( false )
+        distinct == possibleApplications
+    }
+
 }

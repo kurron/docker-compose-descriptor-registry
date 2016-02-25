@@ -16,13 +16,21 @@
 
 package org.kurron.dcr.outbound
 
-import org.bson.types.ObjectId
 import org.kurron.dcr.DockerComposeFragment
-import org.springframework.data.repository.PagingAndSortingRepository
+import org.springframework.beans.factory.annotation.Autowired
+import org.springframework.data.mongodb.core.MongoOperations
 
 /**
- * Outbound gateway that knows how to interact with the persistence store.
+ * Implementation of the custom repository logic.
  **/
-interface DockerComposeFragmentGateway extends PagingAndSortingRepository<DockerComposeFragment, ObjectId>, DockerComposeFragmentGatewayExtension {
+@SuppressWarnings( 'GroovyUnusedDeclaration' )
+class DockerComposeFragmentGatewayImpl implements DockerComposeFragmentGatewayExtension {
 
+    @Autowired
+    private MongoOperations theTemplate
+
+    @Override
+    List<String> distinctApplications() {
+        theTemplate.getCollection( theTemplate.getCollectionName( DockerComposeFragment ) ).distinct( 'applications' )
+    }
 }

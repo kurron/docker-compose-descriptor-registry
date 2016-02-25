@@ -19,6 +19,7 @@ package org.kurron.dcr
 import groovy.transform.Canonical
 import org.bson.types.ObjectId
 import org.springframework.data.annotation.Id
+import org.springframework.data.mongodb.core.index.Indexed
 import org.springframework.data.mongodb.core.mapping.Document
 
 /**
@@ -53,5 +54,6 @@ class DockerComposeFragment {
      * The collection of applications that this fragment is associated with.  For example,
      * "reporting application" or "firewall".
      */
+    @Indexed
     List<String> applications
 }
