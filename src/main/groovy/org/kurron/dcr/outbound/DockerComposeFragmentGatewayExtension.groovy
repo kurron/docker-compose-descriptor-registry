@@ -51,5 +51,5 @@ interface DockerComposeFragmentGatewayExtension {
      * @param version the version to query against.
      * @return the loaded instance.
      */
-    DockerComposeFragment findOne( String application, String release, String version )
+    Optional<DockerComposeFragment> findOne( String application, String release, String version )
 }

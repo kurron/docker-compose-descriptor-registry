@@ -47,7 +47,8 @@ class DockerComposeFragmentGatewayImpl implements DockerComposeFragmentGatewayEx
     }
 
     @Override
-    DockerComposeFragment findOne( final String application, final String release, final String version ) {
-        theTemplate.findOne( Query.query( Criteria.where( 'applications' ).is( application ).and( 'release' ).is( release ).and( 'version' ).is( version ) ), DockerComposeFragment )
+    Optional<DockerComposeFragment> findOne( final String application, final String release, final String version ) {
+        DockerComposeFragment found = theTemplate.findOne( Query.query( Criteria.where( 'applications' ).is( application ).and( 'release' ).is( release ).and( 'version' ).is( version ) ), DockerComposeFragment )
+        Optional.ofNullable( found )
     }
 }

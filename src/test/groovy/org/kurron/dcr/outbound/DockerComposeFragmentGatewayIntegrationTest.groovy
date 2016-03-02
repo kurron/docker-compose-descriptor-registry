@@ -144,7 +144,7 @@ class DockerComposeFragmentGatewayIntegrationTest extends Specification implemen
 
         then: 'we can read out the specific document'
         def first = toSave.first()
-        def found = sut.findOne( first.applications.first(), first.release, first.version )
+        def found = sut.findOne( first.applications.first(), first.release, first.version ).get()
         found == first
     }
 }
