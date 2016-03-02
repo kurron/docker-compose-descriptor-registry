@@ -21,12 +21,19 @@
     <!-- required to ensure that bridging from java.util.logging does not cause a 20% performance hit -->
     <contextListener class="ch.qos.logback.classic.jul.LevelChangePropagator"/>
 
-    <property name="MESSAGE_FORMAT"
-              value="%5.5relative %1(%.-1level) %10.10mdc{work-unit} %4.4mdc{application-type} %4.4mdc{message-code} %35.35logger{0} %message %throwable{short}%n"/>
-
+    <!-- 12 Factor says only log to STDOUT and STDERR and let the process manager worrying about sending it to logstash. -->
     <appender name="CONSOLE" class="ch.qos.logback.core.ConsoleAppender">
-        <encoder>
-            <pattern>${MESSAGE_FORMAT}</pattern>
+        <encoder class="net.logstash.logback.encoder.LogstashEncoder">
+            <includeContext>false</includeContext>
+            <timeZone>UTC</timeZone>
+            <fieldNames>
+                <timestamp>timestamp</timestamp>
+                <message>message</message>
+                <logger>component</logger>
+                <version>[ignore]</version>
+                <thread>[ignore]</thread>
+                <levelValue>[ignore]</levelValue>
+            </fieldNames>
         </encoder>
     </appender>
 
