@@ -17,6 +17,7 @@
 package org.kurron.dcr.outbound
 
 import org.kurron.dcr.Application
+import org.kurron.dcr.DockerComposeDescriptor
 import org.kurron.traits.GenerationAbility
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.test.SpringApplicationContextLoader

@@ -16,8 +16,8 @@
 
 package org.kurron.dcr.core
 
+import org.kurron.dcr.DockerComposeDescriptor
 import org.kurron.dcr.DockerComposeFragment
-import org.kurron.dcr.outbound.DockerComposeDescriptor
 import org.kurron.dcr.outbound.DockerComposeFragmentGateway
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.stereotype.Service

@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package org.kurron.dcr.outbound
+package org.kurron.dcr
 
 import org.bson.types.ObjectId
 import org.springframework.data.annotation.Id
