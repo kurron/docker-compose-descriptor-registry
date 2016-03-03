@@ -1,0 +1,145 @@
+bittorrent-sync-data:
+  image: busybox
+  container_name: bittorrent-sync-data
+  command: "true"
+  volumes:
+      - /mnt/bookkeeping
+      - /mnt/sync
+
+bittorrent-sync:
+  image: kurron/docker-bittorrent-sync
+  container_name: bittorrent-sync
+  volumes_from:
+      - bittorrent-sync-data
+  restart: always
+  net: host
+  ports:
+      - "1234:1234"
+      - "8888:8888"
+  log_driver: "syslog"
+  log_opt:
+    syslog-facility: daemon
+    syslog-tag: "Bit Torrent Sync"
+
+plex-data:
+  image: busybox
+  container_name: plex-data
+  command: "true"
+  volumes:
+      - /config
+
+plex:
+  image: timhaak/plex
+  container_name: plex
+  restart: always
+  net: host
+  ports:
+      - "32400:32400"
+  volumes_from:
+      - plex-data
+      - bittorrent-sync-data
+  volumes:
+      - /mnt/nas:/data
+  log_driver: "syslog"
+  log_opt:
+    syslog-facility: daemon
+    syslog-tag: "Plex"
+
+transmission-data:
+  image: busybox
+  container_name: transmission-data
+  command: "true"
+  volumes:
+      - /var/lib/transmission-daemon
+
+transmission:
+  image: dperson/transmission
+  container_name: transmission
+  volumes_from:
+      - transmission-data
+  restart: always
+  net: host
+  ports:
+      - "9091:9091"
+      - "51413:51413"
+  environment:
+      TRUSER: admin
+      TRPASSWD: admin
+      TIMEZONE: UTC
+  log_driver: "syslog"
+  log_opt:
+    syslog-facility: daemon
+    syslog-tag: "Transmission"
+
+postgresql-data:
+  image: busybox
+  container_name: postgresql-data
+  volumes:
+      - /var/lib/postgresql/data
+
+postgresql:
+  image: postgres
+  container_name: postgresql
+  net: host
+  volumes_from:
+      - postgresql-data
+  restart: always
+  ports:
+      - "5432:5432"
+  environment:
+      POSTGRES_USER: postgresql
+      POSTGRES_PASSWORD: postgresql
+      PGDATA: /var/lib/postgresql/data
+  log_driver: "syslog"
+  log_opt:
+    syslog-facility: daemon
+    syslog-tag: "PostgreSQL"
+
+mysql-data:
+  image: busybox
+  container_name: mysql-data
+  volumes:
+      - /var/lib/mysql
+      - /etc/mysql/conf.d
+
+mysql:
+  image: mysql
+  container_name: mysql
+  net: host
+  volumes_from:
+      - mysql-data
+  restart: always
+  ports:
+      - "3306:3306"
+  environment:
+      MYSQL_ROOT_PASSWORD: sa
+      MYSQL_USER: mysql
+      MYSQL_PASSWORD: mysql
+      MYSQL_DATABASE: owncloud
+  log_driver: "syslog"
+  log_opt:
+    syslog-facility: daemon
+    syslog-tag: "MySQL"
+
+owncloud-data:
+  image: busybox
+  container_name: owncloud-data
+  command: "true"
+  volumes:
+      - /var/www/html
+
+owncloud:
+  image: owncloud
+  container_name: owncloud
+  volumes_from:
+      - owncloud-data
+      - transmission-data
+      - bittorrent-sync-data
+  restart: always
+  net: host
+  ports:
+      - "80:80"
+  log_driver: "syslog"
+  log_opt:
+    syslog-facility: daemon
+    syslog-tag: "Owncloud"
