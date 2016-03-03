@@ -17,39 +17,11 @@
 package org.kurron.dcr.outbound
 
 import org.bson.types.ObjectId
-import org.springframework.data.annotation.Id
+import org.springframework.data.repository.PagingAndSortingRepository
 
 /**
- * A complete Docker Compose descriptor that can persisted.
+ * Outbound gateway that knows how to interact with the persistence store.
  **/
-class DockerComposeDescriptor {
-
-    /**
-     * Primary key of the document.
-     */
-    @Id
-    ObjectId id
-
-    /**
-     * The application that this descriptor is associated with.  For example,
-     * "storm".
-     */
-    String application
-
-    /**
-     * The release this descriptor belongs to, eg. "milestone", "release", "rc", etc.
-     */
-    String release
-
-    /**
-     * The version of the descriptor, eg 199.
-     */
-    int version
-
-    /**
-     * Binary representation of the Docker Compose document (YAML does not play well with JSON)
-     */
-    byte[] descriptor
-
+interface DockerComposeDescriptorGateway extends PagingAndSortingRepository<DockerComposeDescriptor, ObjectId> {
 
 }
