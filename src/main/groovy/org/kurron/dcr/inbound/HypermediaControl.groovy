@@ -78,7 +78,7 @@ class HypermediaControl extends ResourceSupport {
      */
     @JsonProperty( 'versions' )
     @NotNull
-    List<String> versions
+    List<Integer> versions
 
     /**
      * Output only, the Base 64 encoded Docker Compose descriptor.

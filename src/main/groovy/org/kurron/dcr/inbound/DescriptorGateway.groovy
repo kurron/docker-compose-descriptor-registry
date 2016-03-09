@@ -17,40 +17,74 @@
 package org.kurron.dcr.inbound
 
 import static org.kurron.dcr.inbound.HypermediaControl.MIME_TYPE
-import java.time.Clock
+import java.time.Instant
+import org.kurron.categories.ByteArrayEnhancements
+import org.kurron.dcr.outbound.DockerComposeDescriptorGateway
+import org.kurron.stereotype.InboundRestGateway
+import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.http.HttpStatus
 import org.springframework.http.ResponseEntity
 import org.springframework.web.bind.annotation.RequestMapping
 import org.springframework.web.bind.annotation.RequestMethod
-import org.springframework.web.bind.annotation.RestController
+import org.springframework.web.bind.annotation.RequestParam
 
 /**
  * Inbound HTTP gateway that supports the Docker Compose descriptor resource.
  **/
-@RestController
+@InboundRestGateway
 @RequestMapping( path = '/descriptor' )
 class DescriptorGateway {
 
+    /**
+     * Knows how to access the persistence store.
+     */
+    @Autowired
+    private DockerComposeDescriptorGateway gateway
+
     @RequestMapping( path = '/application', method = [RequestMethod.GET], consumes = [MIME_TYPE], produces = [MIME_TYPE] )
     ResponseEntity<HypermediaControl> fetchApplicationList() {
-        ResponseEntity.ok( new HypermediaControl( ) )
-    }
-
-    @RequestMapping( path = '/application/{release}', method = [RequestMethod.GET],  consumes = [MIME_TYPE], produces = [MIME_TYPE] )
-    ResponseEntity<HypermediaControl> fetchReleasesList() {
-        ResponseEntity.ok( new HypermediaControl( ) )
-    }
-
-    @RequestMapping( path = '/application/{release}/{version}', method = [RequestMethod.GET],  consumes = [MIME_TYPE], produces = [MIME_TYPE] )
-    ResponseEntity<HypermediaControl> fetchVersionList() {
-        ResponseEntity.ok( new HypermediaControl( ) )
-    }
-
-    @RequestMapping( path = '/{id}', method = [RequestMethod.GET], produces = [MIME_TYPE]  )
-    ResponseEntity<HypermediaControl> fetchDescriptor() {
-        def control = new HypermediaControl( status: HttpStatus.OK.value(),
-                                             timestamp: Clock.systemDefaultZone().instant() as String,
-                                             descriptor: 'some base64 encoded descriptor' )
+        def control = defaultControl()
+        control.applications = gateway.distinctApplications()
         ResponseEntity.ok( control )
+    }
+
+    @RequestMapping( path = '/application/{application}', method = [RequestMethod.GET],  consumes = [MIME_TYPE], produces = [MIME_TYPE] )
+    ResponseEntity<HypermediaControl> fetchReleasesList( @RequestParam( name = 'application' ) String application ) {
+        def control = defaultControl()
+        control.applications = [application]
+        control.releases = gateway.distinctReleases( application )
+        ResponseEntity.ok( control )
+    }
+
+    @RequestMapping( path = '/application/{application}/{release}', method = [RequestMethod.GET],  consumes = [MIME_TYPE], produces = [MIME_TYPE] )
+    ResponseEntity<HypermediaControl> fetchVersionList( @RequestParam( name = 'application' ) String application,
+                                                        @RequestParam( name = 'release' ) String release ) {
+        def control = defaultControl()
+        control.applications = [application]
+        control.releases = [release]
+        control.versions = gateway.distinctVersions( application, release )
+        ResponseEntity.ok( control )
+    }
+
+    @RequestMapping( path = '/application/{application}/{release}/{version}', method = [RequestMethod.GET], produces = [MIME_TYPE]  )
+    ResponseEntity<HypermediaControl> fetchDescriptor( @RequestParam( name = 'application' ) String application,
+                                                       @RequestParam( name = 'release' ) String release,
+                                                       @RequestParam( name = 'version' ) Integer version ) {
+        def control = defaultControl()
+        control.applications = [application]
+        control.releases = [release]
+        control.versions = [version]
+        def optional = gateway.findOne( application, release, version )
+        control.status = optional.present ? HttpStatus.OK.value() : HttpStatus.NOT_FOUND.value()
+        optional.ifPresent { descriptor ->
+            control.descriptor = use( ByteArrayEnhancements ) { ->
+                descriptor.descriptor.toStringBase64()
+            }
+        }
+        new ResponseEntity<HypermediaControl>( control, optional.present ? HttpStatus.OK : HttpStatus.NOT_FOUND )
+    }
+
+    private static HypermediaControl defaultControl() {
+        new HypermediaControl( status: HttpStatus.OK.value(), timestamp: Instant.now().toString() )
     }
 }
