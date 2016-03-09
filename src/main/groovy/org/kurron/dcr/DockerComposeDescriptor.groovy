@@ -18,12 +18,15 @@ package org.kurron.dcr
 
 import org.bson.types.ObjectId
 import org.springframework.data.annotation.Id
+import org.springframework.data.mongodb.core.index.CompoundIndex
+import org.springframework.data.mongodb.core.index.CompoundIndexes
 import org.springframework.data.mongodb.core.mapping.Document
 
 /**
  * A complete Docker Compose descriptor that can persisted.
  **/
 @Document
+@CompoundIndexes( [@CompoundIndex( name = 'unique_index', def = "{ 'application': 1, 'release': 1, 'version': 1 }", unique = true )] )
 class DockerComposeDescriptor {
 
     /**
