@@ -16,6 +16,8 @@
 
 package org.kurron.dcr.outbound
 
+import org.junit.experimental.categories.Category
+import org.kurron.categories.OutboundIntegrationTest
 import org.kurron.dcr.Application
 import org.kurron.dcr.DockerComposeFragment
 import org.kurron.traits.GenerationAbility
@@ -30,6 +32,7 @@ import spock.lang.Specification
 /**
  * Integration test of the DockerComposeFragmentGateway.
  */
+@Category( OutboundIntegrationTest )
 @WebIntegrationTest( randomPort = true )
 @ContextConfiguration( classes = Application, loader = SpringApplicationContextLoader )
 class DockerComposeFragmentGatewayIntegrationTest extends Specification implements GenerationAbility {

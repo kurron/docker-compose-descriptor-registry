@@ -45,11 +45,16 @@ class DefaultFragmentAssembler implements FragmentAssembler {
         // 03) return the newly generated descriptors -- not persisted
 
         def descriptors = fragment.applications.collect { application ->
+            // 01) find the "highest" combination of application/release/version in the database
+            // 02) either add or replace the fragment in the existing descriptor with the new one
+            // 03) fetch the next sequence number
+            // 04) update the descriptor with the new sequence number
+            // 05) save that descriptor as a new document
+
             // 01) find all fragments stored for the combination of application+release
             // 02) remove the one that resembles the new fragment
             // 03) create a new descriptor
             // How do we get the highest versions of the fragments?
         }
-        throw new UnsupportedOperationException( 'assemble' )
     }
 }

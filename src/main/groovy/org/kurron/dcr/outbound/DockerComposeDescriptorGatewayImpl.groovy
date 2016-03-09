@@ -19,6 +19,7 @@ package org.kurron.dcr.outbound
 import static org.springframework.data.mongodb.core.FindAndModifyOptions.options
 import static org.springframework.data.mongodb.core.query.Criteria.where
 import static org.springframework.data.mongodb.core.query.Query.query
+import org.kurron.dcr.DockerComposeDescriptor
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.data.mongodb.core.MongoOperations
 import org.springframework.data.mongodb.core.query.Update
@@ -39,5 +40,13 @@ class DockerComposeDescriptorGatewayImpl implements DockerComposeDescriptorGatew
         def options = options().upsert( true ).returnNew( true )
         DescriptorCounter updatedDocument = theTemplate.findAndModify( query, update, options, DescriptorCounter )
         updatedDocument.counter
+    }
+
+    @Override
+    Optional<DockerComposeDescriptor> mostCurrent( final String application, final String release ) {
+        // the index is set up so that the highest version is the first in the collection
+        def query = query( where( 'application' ).is( application ).and( 'release' ).is( release ) )
+        def found = theTemplate.findOne( query, DockerComposeDescriptor )
+        Optional.ofNullable( found )
     }
 }

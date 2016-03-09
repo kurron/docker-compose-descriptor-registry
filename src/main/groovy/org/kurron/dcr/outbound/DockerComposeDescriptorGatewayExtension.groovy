@@ -16,6 +16,8 @@
 
 package org.kurron.dcr.outbound
 
+import org.kurron.dcr.DockerComposeDescriptor
+
 /**
  * Outbound gateway that knows how to interact with the persistence store.
  **/
@@ -28,4 +30,12 @@ interface DockerComposeDescriptorGatewayExtension {
      * @return next available sequence.
      */
     int nextSequence( String application, String release )
+
+    /**
+     * Obtains the descriptor with the highest version number value.
+     * @param application the application name to filter on.
+     * @param release the release name to filter on.
+     * @return the located document.
+     */
+    Optional<DockerComposeDescriptor> mostCurrent( String application, String release )
 }

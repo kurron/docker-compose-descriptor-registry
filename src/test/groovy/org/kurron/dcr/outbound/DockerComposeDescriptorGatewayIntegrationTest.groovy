@@ -16,6 +16,8 @@
 
 package org.kurron.dcr.outbound
 
+import org.junit.experimental.categories.Category
+import org.kurron.categories.OutboundIntegrationTest
 import org.kurron.dcr.Application
 import org.kurron.dcr.DockerComposeDescriptor
 import org.kurron.traits.GenerationAbility
@@ -30,6 +32,7 @@ import spock.lang.Specification
 /**
  * Integration test of the DockerComposeDescriptorGateway.
  */
+@Category( OutboundIntegrationTest )
 @WebIntegrationTest( randomPort = true )
 @ContextConfiguration( classes = Application, loader = SpringApplicationContextLoader )
 class DockerComposeDescriptorGatewayIntegrationTest extends Specification implements GenerationAbility {
@@ -81,4 +84,34 @@ class DockerComposeDescriptorGatewayIntegrationTest extends Specification implem
         then: 'the sequence is correct'
         expected == sequence
     }
+
+    def 'verify mostCurrent with empty database'() {
+        given: 'the gateway was injected'
+        sut
+
+        when: 'we call mostCurrent'
+        def found = sut.mostCurrent( randomHexString(), randomHexString() )
+
+        then: 'we can detect it was not found'
+        !found.present
+    }
+
+    def 'verify mostCurrent with a loaded database'() {
+        given: 'the gateway was injected'
+        sut
+
+        and: 'several documents are inserted into the database'
+        def application = randomHexString()
+        def release = randomHexString()
+        def toInsert = (1..1000).collect { new DockerComposeDescriptor( application: application, release: release, version: it ) }
+        def inserted = sut.save( toInsert )
+
+        when: 'we call mostCurrent'
+        def found = sut.mostCurrent( application, release )
+
+        then: 'we are returned the highest sequenced document'
+        def highest = found.get()
+        inserted.sort( false ) { it.id }.reverse( false ).first().version == highest.version
+    }
+
 }
