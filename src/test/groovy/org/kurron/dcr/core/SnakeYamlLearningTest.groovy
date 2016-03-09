@@ -17,6 +17,7 @@
 package org.kurron.dcr.core
 
 import org.kurron.traits.GenerationAbility
+import org.yaml.snakeyaml.DumperOptions
 import org.yaml.snakeyaml.Yaml
 import spock.lang.Specification
 
@@ -25,10 +26,12 @@ import spock.lang.Specification
  */
 class SnakeYamlLearningTest extends Specification implements GenerationAbility {
 
-    def sut = new Yaml()
 
     def 'explore treating the document as a map'() {
-        given: 'a yaml document stream'
+        given: 'a subject under test'
+        def sut = new Yaml()
+
+        and: 'a yaml document stream'
         def yaml = SnakeYamlLearningTest.classLoader.getResourceAsStream( 'docker-compose.yml' )
 
         when: 'we parse the stream'
@@ -42,6 +45,35 @@ class SnakeYamlLearningTest extends Specification implements GenerationAbility {
         }
 
         println transformed
+    }
+
+    def 'explore creating a document from a map'() {
+        given: 'a subject under test'
+        def options = new DumperOptions()
+        options.canonical = false
+        options.indent = 4
+        options.defaultFlowStyle = DumperOptions.FlowStyle.BLOCK
+        options.defaultScalarStyle = DumperOptions.ScalarStyle.PLAIN
+        options.prettyFlow = true
+        def sut = new Yaml( options )
+
+        and: 'a populated map'
+        def map = ['mongodb': ['image': 'mongo',
+                               'container_name': 'mongodb',
+                               'volumes_from': ['mongodb-data'],
+                               'restart': 'always',
+                               'ports': ['27017:27017'],
+                               'net': 'host',
+                               'command': '--storageEngine=wiredTiger --wiredTigerCacheSizeGB=1 --notablescan --journalCommitInterval=300 --directoryperdb']
+        ]
+
+        when: 'we dump the map'
+        def document = sut.dump( map )
+
+        then: 'we can print the yaml'
+        println document
+        def loaded = sut.load( document ) as Map
+        println loaded
     }
 
 }

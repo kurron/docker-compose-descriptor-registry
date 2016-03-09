@@ -18,9 +18,10 @@ package org.kurron.dcr.core
 
 import org.kurron.dcr.DockerComposeDescriptor
 import org.kurron.dcr.DockerComposeFragment
-import org.kurron.dcr.outbound.DockerComposeFragmentGateway
+import org.kurron.dcr.outbound.DockerComposeDescriptorGateway
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.stereotype.Service
+import org.yaml.snakeyaml.Yaml
 
 /**
  * Production implementation of the FragmentAssembler interface.
@@ -31,30 +32,50 @@ class DefaultFragmentAssembler implements FragmentAssembler {
     /**
      * Manages interactions with the database.
      */
-    private final DockerComposeFragmentGateway theGateway
+    private final DockerComposeDescriptorGateway theGateway
 
     @Autowired
-    DefaultFragmentAssembler( final DockerComposeFragmentGateway aGateway ) {
+    DefaultFragmentAssembler( final DockerComposeDescriptorGateway aGateway ) {
         theGateway = aGateway
     }
 
     @Override
     List<DockerComposeDescriptor> assemble( final DockerComposeFragment fragment ) {
-        // 01) persist the fragment -- do we really need to save it?
-        // 02) create a new descriptor for each application-release the fragment belongs to
-        // 03) return the newly generated descriptors -- not persisted
-
-        def descriptors = fragment.applications.collect { application ->
-            // 01) find the "highest" combination of application/release/version in the database
-            // 02) either add or replace the fragment in the existing descriptor with the new one
-            // 03) fetch the next sequence number
-            // 04) update the descriptor with the new sequence number
-            // 05) save that descriptor as a new document
-
-            // 01) find all fragments stored for the combination of application+release
-            // 02) remove the one that resembles the new fragment
-            // 03) create a new descriptor
-            // How do we get the highest versions of the fragments?
+        fragment.applications.collect { application ->
+            def descriptor = loadDescriptor( application, fragment )
+            replaceFragmentInDescriptor( descriptor, fragment )
+            persistDescriptor( application, fragment.release, descriptor )
         }
+    }
+
+    private static void replaceFragmentInDescriptor( DockerComposeDescriptor descriptor, DockerComposeFragment fragment ) {
+        def descriptorYml = parseYml( descriptor.descriptor )
+        def fragmentYml = parseYml( fragment.fragment )
+        descriptorYml.put( fragmentYml.keySet().first() as String,  descriptorYml[fragmentYml.keySet().first() as String] )
+    }
+
+    private static Map parseYml( byte[] yml ) {
+        def parser = new Yaml()
+        Map parsed = [:]
+        new ByteArrayInputStream( yml ).withStream {
+            // ugly side effect code but I didn't want to return in the middle of the closure -- not sure how safe that is
+            parsed = parser.load( it ) as Map
+        }
+        parsed
+    }
+
+    private DockerComposeDescriptor persistDescriptor( String application, String release, DockerComposeDescriptor descriptor ) {
+        descriptor.version = theGateway.nextSequence( application, release )
+        descriptor.id = null // make sure we get a new document
+        theGateway.save( descriptor )
+    }
+
+    private DockerComposeDescriptor loadDescriptor( String application, DockerComposeFragment fragment ) {
+        def loaded = theGateway.mostCurrent( application, fragment.release )
+        loaded.orElse( initialDescriptor( application, fragment ) )
+    }
+
+    private static DockerComposeDescriptor initialDescriptor( String application, DockerComposeFragment fragment ) {
+        new DockerComposeDescriptor( application: application, release: fragment.release, descriptor: fragment.fragment )
     }
 }
