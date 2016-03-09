@@ -87,16 +87,22 @@ class DefaultFragmentAssemblerComponentTest extends Specification implements Gen
         given: 'a valid subject under test'
         assert sut
 
-        and: 'add the first fragment'
+        and: 'and fragment coordinates'
         def applications = (1..3).collect { randomHexString() }
         def release = randomHexString()
         def version = randomHexString()
-        def fragment = new DockerComposeFragment( applications: applications, release: release, version: version, fragment: createYml( '10' ) )
-        sut.assemble( fragment )
 
-        when: 'we add another fragment'
-        def newFragment = new DockerComposeFragment( applications: applications, release: release, version: version, fragment: createYml( '20' ) )
-        def results = sut.assemble( newFragment )
+        and: 'add the Redis fragment'
+        def redis = new DockerComposeFragment( applications: applications, release: release, version: version, fragment: createYml( '10', false ) )
+        sut.assemble( redis )
+
+        and: 'add the MongoDB fragment'
+        def mongoDB = new DockerComposeFragment( applications: applications, release: release, version: version, fragment: createYml( '10' ) )
+        sut.assemble( mongoDB )
+
+        when: 'we add another MongoDB fragment'
+        def fragment = new DockerComposeFragment( applications: applications, release: release, version: version, fragment: createYml( '20' ) )
+        def results = sut.assemble( fragment )
 
         then: 'we get descriptors for each application'
         applications.every { application ->
@@ -111,7 +117,7 @@ class DefaultFragmentAssemblerComponentTest extends Specification implements Gen
         }
     }
 
-    byte[] createYml( String label = '0' ) {
+    byte[] createYml( String label = '0', boolean createMongodbFragment = true ) {
         def options = new DumperOptions()
         options.canonical = false
         options.indent = 4
@@ -119,17 +125,25 @@ class DefaultFragmentAssemblerComponentTest extends Specification implements Gen
         options.defaultScalarStyle = DumperOptions.ScalarStyle.PLAIN
         options.prettyFlow = true
         def parser = new Yaml( options )
-        def map = ['mongodb': ['image': 'mongo',
-                               'container_name': 'mongodb',
-                               'volumes_from': ['mongodb-data'],
-                               'restart': 'always',
-                               'ports': ['27017:27017'],
-                               'labels': ['com.example.revision': label],
-                               'net': 'host',
-                               'command': '--storageEngine=wiredTiger --wiredTigerCacheSizeGB=1 --notablescan --journalCommitInterval=300 --directoryperdb']
+        def mongoMap = ['mongodb': ['image': 'mongo',
+                                    'container_name': 'mongodb',
+                                    'volumes_from': ['mongodb-data'],
+                                    'restart': 'always',
+                                    'ports': ['27017:27017'],
+                                    'labels': ['com.example.revision': label],
+                                    'net': 'host',
+                                    'command': '--storageEngine=wiredTiger --wiredTigerCacheSizeGB=1 --notablescan --journalCommitInterval=300 --directoryperdb']
         ]
+        def redisMap = ['redis': ['image': 'redis',
+                                  'container_name': 'redis',
+                                  'volumes_from': ['redis-data'],
+                                  'restart': 'always',
+                                  'ports': ['6379:6379'],
+                                  'labels': ['com.example.revision': '0'],
+                                  'net': 'host']]
+
         use( StringEnhancements ) { ->
-            parser.dump( map ).utf8Bytes
+            parser.dump( createMongodbFragment ? mongoMap : redisMap ).utf8Bytes
         }
     }
 }
