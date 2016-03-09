@@ -26,9 +26,12 @@ import org.kurron.traits.GenerationAbility
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.test.IntegrationTest
 import org.springframework.boot.test.SpringApplicationContextLoader
+import org.springframework.data.mongodb.core.MongoOperations
+import org.springframework.data.mongodb.core.query.Query
 import org.springframework.test.context.ContextConfiguration
 import org.yaml.snakeyaml.DumperOptions
 import org.yaml.snakeyaml.Yaml
+import spock.lang.Ignore
 import spock.lang.Specification
 
 /**
@@ -40,8 +43,19 @@ import spock.lang.Specification
 class DefaultFragmentAssemblerComponentTest extends Specification implements GenerationAbility {
 
     @Autowired
+    MongoOperations template
+
+    @Autowired
     DefaultFragmentAssembler sut
 
+    def setup() {
+        assert template
+        template.collectionNames.findAll { !it.startsWith( 'system.' ) }.each {
+            template.remove( new Query(), it )
+        }
+    }
+
+    @Ignore
     def 'verify assemble function with empty database'() {
         given: 'a valid subject under test'
         assert sut
@@ -69,7 +83,35 @@ class DefaultFragmentAssemblerComponentTest extends Specification implements Gen
         }
     }
 
-    byte[] createYml() {
+    def 'verify assemble function with populated database'() {
+        given: 'a valid subject under test'
+        assert sut
+
+        and: 'add the first fragment'
+        def applications = (1..3).collect { randomHexString() }
+        def release = randomHexString()
+        def version = randomHexString()
+        def fragment = new DockerComposeFragment( applications: applications, release: release, version: version, fragment: createYml( '10' ) )
+        sut.assemble( fragment )
+
+        when: 'we add another fragment'
+        def newFragment = new DockerComposeFragment( applications: applications, release: release, version: version, fragment: createYml( '20' ) )
+        def results = sut.assemble( newFragment )
+
+        then: 'we get descriptors for each application'
+        applications.every { application ->
+            results.find { it.application == application }
+        }
+
+        and: 'dump the descriptors for human examination'
+        results.each {
+            println use( ByteArrayEnhancements ) { ->
+                it.descriptor.toStringUtf8()
+            }
+        }
+    }
+
+    byte[] createYml( String label = '0' ) {
         def options = new DumperOptions()
         options.canonical = false
         options.indent = 4
@@ -82,6 +124,7 @@ class DefaultFragmentAssemblerComponentTest extends Specification implements Gen
                                'volumes_from': ['mongodb-data'],
                                'restart': 'always',
                                'ports': ['27017:27017'],
+                               'labels': ['com.example.revision': label],
                                'net': 'host',
                                'command': '--storageEngine=wiredTiger --wiredTigerCacheSizeGB=1 --notablescan --journalCommitInterval=300 --directoryperdb']
         ]

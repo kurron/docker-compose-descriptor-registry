@@ -16,11 +16,13 @@
 
 package org.kurron.dcr.core
 
+import org.kurron.categories.StringEnhancements
 import org.kurron.dcr.DockerComposeDescriptor
 import org.kurron.dcr.DockerComposeFragment
 import org.kurron.dcr.outbound.DockerComposeDescriptorGateway
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.stereotype.Service
+import org.yaml.snakeyaml.DumperOptions
 import org.yaml.snakeyaml.Yaml
 
 /**
@@ -51,7 +53,22 @@ class DefaultFragmentAssembler implements FragmentAssembler {
     private static void replaceFragmentInDescriptor( DockerComposeDescriptor descriptor, DockerComposeFragment fragment ) {
         def descriptorYml = parseYml( descriptor.descriptor )
         def fragmentYml = parseYml( fragment.fragment )
-        descriptorYml.put( fragmentYml.keySet().first() as String,  descriptorYml[fragmentYml.keySet().first() as String] )
+        def replacementKey = fragmentYml.keySet().first() as String
+        descriptorYml.put( replacementKey, fragmentYml[replacementKey] )
+        descriptor.descriptor = convertToYmlBytes( descriptorYml )
+    }
+
+    private static byte[] convertToYmlBytes( Map descriptorYml ) {
+        def options = new DumperOptions()
+        options.canonical = false
+        options.indent = 4
+        options.defaultFlowStyle = DumperOptions.FlowStyle.BLOCK
+        options.defaultScalarStyle = DumperOptions.ScalarStyle.PLAIN
+        options.prettyFlow = true
+        def parser = new Yaml( options )
+        use( StringEnhancements ) { ->
+            parser.dump( descriptorYml ).utf8Bytes
+        }
     }
 
     private static Map parseYml( byte[] yml ) {
