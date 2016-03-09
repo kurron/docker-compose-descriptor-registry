@@ -38,4 +38,35 @@ interface DockerComposeDescriptorGatewayExtension {
      * @return the located document.
      */
     Optional<DockerComposeDescriptor> mostCurrent( String application, String release )
+
+    /**
+     * Constructs a collection of the distinct applications associated with the various descriptors in the database.
+     * @return a collection of distinct applications.
+     */
+    List<String> distinctApplications()
+
+    /**
+     * Constructs a collection of the distinct releases associated with a particular application.
+     * @param application the application name to query against.
+     * @return a collection of distinct releases.
+     */
+    List<String> distinctReleases( String application )
+
+    /**
+     * Constructs a collection of the distinct versions associated with a particular application and release.
+     * @param application the application name to query against.
+     * @param release the release name to query against.
+     * @return a collection of distinct versions.
+     */
+    List<Integer> distinctVersions( String application, String release )
+
+    /**
+     * Loads the specific descriptor from, the database.
+     * @param application the application name to query against.
+     * @param release the release name to query against.
+     * @param version the version to query against.
+     * @return the loaded instance.
+     */
+    Optional<DockerComposeDescriptor> findOne( String application, String release, Integer version )
+
 }

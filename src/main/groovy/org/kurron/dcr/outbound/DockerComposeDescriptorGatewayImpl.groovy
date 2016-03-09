@@ -49,4 +49,26 @@ class DockerComposeDescriptorGatewayImpl implements DockerComposeDescriptorGatew
         def found = theTemplate.findOne( query, DockerComposeDescriptor )
         Optional.ofNullable( found )
     }
+
+    @Override
+    List<String> distinctApplications() {
+        theTemplate.getCollection( theTemplate.getCollectionName( DockerComposeDescriptor ) ).distinct( 'application' )
+    }
+
+    @Override
+    List<String> distinctReleases( final String application ) {
+        theTemplate.find( query( where( 'application' ).is( application ) ), DockerComposeDescriptor ).collect { it.release }.unique( false )
+    }
+
+    @Override
+    List<Integer> distinctVersions( final String application, final String release ) {
+        theTemplate.find( query( where( 'application' ).is( application ).and( 'release' ).is( release ) ), DockerComposeDescriptor ).collect { it.version }.unique( false )
+    }
+
+    @Override
+    Optional<DockerComposeDescriptor> findOne( final String application, final String release, final Integer version ) {
+        DockerComposeDescriptor found = theTemplate.findOne( query( where( 'application' ).is( application ).and( 'release' ).is( release ).and( 'version' ).is( version ) ), DockerComposeDescriptor )
+        Optional.ofNullable( found )
+    }
+
 }
