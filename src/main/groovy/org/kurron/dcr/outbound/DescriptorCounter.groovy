@@ -18,10 +18,15 @@ package org.kurron.dcr.outbound
 
 import org.bson.types.ObjectId
 import org.springframework.data.annotation.Id
+import org.springframework.data.mongodb.core.index.CompoundIndex
+import org.springframework.data.mongodb.core.index.CompoundIndexes
+import org.springframework.data.mongodb.core.mapping.Document
 
 /**
  * This document provides an atomic counter for the descriptor's version.
  **/
+@Document
+@CompoundIndexes( [@CompoundIndex( name = 'unique_index', def = "{ 'application': 1, 'release': 1 }", unique = true )] )
 class DescriptorCounter {
 
     /**
@@ -42,7 +47,7 @@ class DescriptorCounter {
     String release
 
     /**
-     * The next available version in the sequence.
+     * The next available number in the sequence.
      */
     int counter
 }

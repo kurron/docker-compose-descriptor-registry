@@ -23,6 +23,6 @@ import org.springframework.data.repository.PagingAndSortingRepository
 /**
  * Outbound gateway that knows how to interact with the persistence store.
  **/
-interface DockerComposeDescriptorGateway extends PagingAndSortingRepository<DockerComposeDescriptor, ObjectId> {
+interface DockerComposeDescriptorGateway extends PagingAndSortingRepository<DockerComposeDescriptor, ObjectId>, DockerComposeDescriptorGatewayExtension {
 
 }

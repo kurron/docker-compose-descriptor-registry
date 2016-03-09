@@ -62,4 +62,23 @@ class DockerComposeDescriptorGatewayIntegrationTest extends Specification implem
         DockerComposeDescriptor read = sut.findOne( saved.id )
         read
     }
+
+    // NOTE: we CANNOT use a data driven test because the database gets reset in between iterations
+    def 'verify sequence method'() {
+        given: 'the gateway was injected'
+        sut
+
+        and: 'randomly generated application/release pair'
+        def application = randomHexString()
+        def release = randomHexString()
+
+        and: 'an expected range of sequence numbers'
+        def expected = (1..10)
+
+        when: 'we insert a document multiple times'
+        def sequence = expected.collect { sut.nextSequence( application, release ) }
+
+        then: 'the sequence is correct'
+        expected == sequence
+    }
 }
