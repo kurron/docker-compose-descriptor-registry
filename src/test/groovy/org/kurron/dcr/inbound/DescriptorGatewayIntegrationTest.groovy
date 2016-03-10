@@ -90,7 +90,7 @@ class DescriptorGatewayIntegrationTest extends Specification implements Generati
 
     private static HttpEntity buildRequest() {
         def headers = new HttpHeaders()
-        headers.setContentType( HypermediaControl.MIME_TYPE )
+        headers.setContentType( HypermediaControl.MEDIA_TYPE )
         new HttpEntity( headers )
     }
 

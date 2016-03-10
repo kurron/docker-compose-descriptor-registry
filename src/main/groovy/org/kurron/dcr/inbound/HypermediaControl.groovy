@@ -30,9 +30,14 @@ import org.springframework.http.MediaType
 class HypermediaControl extends ResourceSupport {
 
     /**
+     * The string form of the control's MIME-TYPE.
+     */
+    static final String MIME_TYPE = 'application/hal+json'
+
+    /**
      * The object form of the control's MIME-TYPE.
      */
-    static final MediaType MIME_TYPE = MediaType.parseMediaType( 'application/hal+json' )
+    static final MediaType MEDIA_TYPE = MediaType.parseMediaType( MIME_TYPE )
 
     /**
      * HTTP status of the service, response-only.
