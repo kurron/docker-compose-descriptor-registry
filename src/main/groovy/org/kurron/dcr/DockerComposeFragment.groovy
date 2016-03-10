@@ -17,23 +17,12 @@
 package org.kurron.dcr
 
 import groovy.transform.Canonical
-import org.bson.types.ObjectId
-import org.springframework.data.annotation.Id
-import org.springframework.data.mongodb.core.index.Indexed
-import org.springframework.data.mongodb.core.mapping.Document
 
 /**
- * A MongoDB document that stores individual Docker Compose fragments.
+ * An individual Docker Compose fragment.
  **/
 @Canonical
-@Document
 class DockerComposeFragment {
-
-    /**
-     * Primary key of the document.
-     */
-    @Id
-    ObjectId id
 
     /**
      * Binary representation of the Docker Compose fragment (YAML does not play well with JSON)
@@ -43,19 +32,11 @@ class DockerComposeFragment {
     /**
      * The release this fragment belongs to, eg. "milestone", "release", "rc", etc.
      */
-    @Indexed
     String release
-
-    /**
-     * The version of the fragment, eg module-1.2.3.RELEASE.
-     */
-    @Indexed
-    String version
 
     /**
      * The collection of applications that this fragment is associated with.  For example,
      * "reporting application" or "firewall".
      */
-    @Indexed
     List<String> applications
 }

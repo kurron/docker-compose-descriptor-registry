@@ -31,7 +31,6 @@ import org.springframework.data.mongodb.core.query.Query
 import org.springframework.test.context.ContextConfiguration
 import org.yaml.snakeyaml.DumperOptions
 import org.yaml.snakeyaml.Yaml
-import spock.lang.Ignore
 import spock.lang.Specification
 
 /**
@@ -55,7 +54,6 @@ class DefaultFragmentAssemblerComponentTest extends Specification implements Gen
         }
     }
 
-    @Ignore
     def 'verify assemble function with empty database'() {
         given: 'a valid subject under test'
         assert sut
@@ -63,9 +61,8 @@ class DefaultFragmentAssemblerComponentTest extends Specification implements Gen
         and: 'add a new fragment'
         def applications = (1..3).collect { randomHexString() }
         def release = randomHexString()
-        def version = randomHexString()
         def yml = createYml()
-        def fragment = new DockerComposeFragment( applications: applications, release: release, version: version, fragment: yml )
+        def fragment = new DockerComposeFragment( applications: applications, release: release, fragment: yml )
 
         when: 'we add it to the system'
         def results = sut.assemble( fragment )
@@ -90,18 +87,17 @@ class DefaultFragmentAssemblerComponentTest extends Specification implements Gen
         and: 'and fragment coordinates'
         def applications = (1..3).collect { randomHexString() }
         def release = randomHexString()
-        def version = randomHexString()
 
         and: 'add the Redis fragment'
-        def redis = new DockerComposeFragment( applications: applications, release: release, version: version, fragment: createYml( '10', false ) )
+        def redis = new DockerComposeFragment( applications: applications, release: release, fragment: createYml( '10', false ) )
         sut.assemble( redis )
 
         and: 'add the MongoDB fragment'
-        def mongoDB = new DockerComposeFragment( applications: applications, release: release, version: version, fragment: createYml( '10' ) )
+        def mongoDB = new DockerComposeFragment( applications: applications, release: release, fragment: createYml( '10' ) )
         sut.assemble( mongoDB )
 
         when: 'we add another MongoDB fragment'
-        def fragment = new DockerComposeFragment( applications: applications, release: release, version: version, fragment: createYml( '20' ) )
+        def fragment = new DockerComposeFragment( applications: applications, release: release, fragment: createYml( '20' ) )
         def results = sut.assemble( fragment )
 
         then: 'we get descriptors for each application'

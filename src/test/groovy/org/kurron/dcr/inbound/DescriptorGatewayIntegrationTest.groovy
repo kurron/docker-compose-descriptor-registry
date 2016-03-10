@@ -71,7 +71,6 @@ class DescriptorGatewayIntegrationTest extends Specification implements Generati
         fragments = (1..10).collect {
             new DockerComposeFragment( applications: (1..3).collect { randomHexString() },
                                        release: randomHexString(),
-                                       version: randomHexString(),
                                        fragment: createYml() )
         }
         fragments.each {
