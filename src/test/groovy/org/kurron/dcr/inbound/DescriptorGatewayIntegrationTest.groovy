@@ -18,7 +18,6 @@ package org.kurron.dcr.inbound
 
 import org.junit.experimental.categories.Category
 import org.kurron.categories.InboundIntegrationTest
-import org.kurron.categories.StringEnhancements
 import org.kurron.dcr.Application
 import org.kurron.dcr.DockerComposeFragment
 import org.kurron.dcr.core.FragmentAssembler
@@ -33,8 +32,6 @@ import org.springframework.data.mongodb.core.query.Query
 import org.springframework.http.HttpMethod
 import org.springframework.http.HttpStatus
 import org.springframework.test.context.ContextConfiguration
-import org.yaml.snakeyaml.DumperOptions
-import org.yaml.snakeyaml.Yaml
 import spock.lang.Specification
 
 /**
@@ -43,7 +40,7 @@ import spock.lang.Specification
 @Category( InboundIntegrationTest )
 @WebIntegrationTest( randomPort = true )
 @ContextConfiguration( classes = Application, loader = SpringApplicationContextLoader )
-class DescriptorGatewayIntegrationTest extends Specification implements GenerationAbility, RestCapable {
+class DescriptorGatewayIntegrationTest extends Specification implements GenerationAbility, RestCapable, YamlCapable {
 
     @Value( '${local.server.port}' )
     int port
@@ -68,7 +65,7 @@ class DescriptorGatewayIntegrationTest extends Specification implements Generati
         fragments = (1..10).collect {
             new DockerComposeFragment( applications: (1..3).collect { randomHexString() },
                                        release: randomHexString(),
-                                       fragment: createYml() )
+                                       fragment: createYmlBytes() )
         }
         fragments.each {
             assembler.assemble( it )
@@ -144,27 +141,6 @@ class DescriptorGatewayIntegrationTest extends Specification implements Generati
         def response = template.exchange( uri, HttpMethod.GET, buildRequest(), HypermediaControl )
         assert response.statusCode == HttpStatus.OK
         response.body.versions.first()
-    }
-
-    byte[] createYml() {
-        def options = new DumperOptions()
-        options.canonical = false
-        options.indent = 4
-        options.defaultFlowStyle = DumperOptions.FlowStyle.BLOCK
-        options.defaultScalarStyle = DumperOptions.ScalarStyle.PLAIN
-        options.prettyFlow = true
-        def parser = new Yaml( options )
-        def redisMap = ['redis': ['image': 'redis',
-                                  'container_name': 'redis',
-                                  'volumes_from': ['redis-data'],
-                                  'restart': 'always',
-                                  'ports': ['6379:6379'],
-                                  'labels': ['com.example.revision': '0'],
-                                  'net': 'host']]
-
-        use( StringEnhancements ) { ->
-            parser.dump( redisMap ).utf8Bytes
-        }
     }
 
 }
