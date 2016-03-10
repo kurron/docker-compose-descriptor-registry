@@ -59,6 +59,8 @@ class DescriptorGatewayIntegrationTest extends Specification implements Generati
     @Autowired
     MongoOperations mongodb
 
+    List<DockerComposeFragment> fragments
+
     def setup() {
         assert mongodb
         mongodb.collectionNames.findAll { !it.startsWith( 'system.' ) }.each {
@@ -66,26 +68,43 @@ class DescriptorGatewayIntegrationTest extends Specification implements Generati
         }
 
         assert assembler
-        10.times {
-            def fragment = new DockerComposeFragment( applications: (1..3).collect { randomHexString() },
-                                                      release: randomHexString(),
-                                                      version: randomHexString(),
-                                                      fragment: createYml() )
-            assembler.assemble( fragment )
+        fragments = (1..10).collect {
+            new DockerComposeFragment( applications: (1..3).collect { randomHexString() },
+                                       release: randomHexString(),
+                                       version: randomHexString(),
+                                       fragment: createYml() )
+        }
+        fragments.each {
+            assembler.assemble( it )
         }
     }
 
     def 'verify GET /descriptor/application'() {
         given: 'a proper testing environment'
         assert port
-        assert assembler
 
         when: 'we GET /descriptor/application'
-        def response = template.exchange( buildURI( '/descriptor/application' ), HttpMethod.GET, buildRequest(), HypermediaControl )
+        def uri = buildURI( '/descriptor/application', [:] )
+        def response = template.exchange( uri, HttpMethod.GET, buildRequest(), HypermediaControl )
 
         then: 'we get a list of applications in the system'
         HttpStatus.OK == response.statusCode
         response.body.applications
+    }
+
+    def 'verify GET /descriptor/application/{application}'() {
+        given: 'a proper testing environment'
+        assert port
+
+        when: 'we GET /descriptor/application/{application}'
+        def application = fragments.first().applications.first()
+        def uri = buildURI( '/descriptor/application/{application}', ['application': application] )
+        def response = template.exchange( uri, HttpMethod.GET, buildRequest(), HypermediaControl )
+
+        then: 'we get a list of applications in the system'
+        HttpStatus.OK == response.statusCode
+        response.body.applications
+        response.body.releases
     }
 
     private static HttpEntity buildRequest() {
@@ -94,8 +113,8 @@ class DescriptorGatewayIntegrationTest extends Specification implements Generati
         new HttpEntity( headers )
     }
 
-    private URI buildURI( String path ) {
-        UriComponentsBuilder.newInstance().scheme( 'http' ).host( 'localhost' ).port( port ).path( path ).build().toUri()
+    private URI buildURI( String path, Map variables ) {
+        UriComponentsBuilder.newInstance().scheme( 'http' ).host( 'localhost' ).port( port ).path( path ).buildAndExpand( variables ).toUri()
     }
 
     byte[] createYml() {

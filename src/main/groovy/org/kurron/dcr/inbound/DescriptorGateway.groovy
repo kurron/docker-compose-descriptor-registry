@@ -24,6 +24,7 @@ import org.kurron.stereotype.InboundRestGateway
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.http.HttpStatus
 import org.springframework.http.ResponseEntity
+import org.springframework.web.bind.annotation.PathVariable
 import org.springframework.web.bind.annotation.RequestMapping
 import org.springframework.web.bind.annotation.RequestMethod
 import org.springframework.web.bind.annotation.RequestParam
@@ -49,7 +50,7 @@ class DescriptorGateway {
     }
 
     @RequestMapping( path = '/application/{application}', method = [RequestMethod.GET],  consumes = [MIME_TYPE], produces = [MIME_TYPE] )
-    ResponseEntity<HypermediaControl> fetchReleasesList( @RequestParam( name = 'application' ) String application ) {
+    ResponseEntity<HypermediaControl> fetchReleasesList( @PathVariable String application ) {
         def control = defaultControl()
         control.applications = [application]
         control.releases = gateway.distinctReleases( application )
