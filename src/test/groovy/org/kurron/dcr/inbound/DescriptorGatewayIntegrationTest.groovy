@@ -18,18 +18,26 @@ package org.kurron.dcr.inbound
 
 import org.junit.experimental.categories.Category
 import org.kurron.categories.InboundIntegrationTest
+import org.kurron.categories.StringEnhancements
 import org.kurron.dcr.Application
+import org.kurron.dcr.DockerComposeFragment
+import org.kurron.dcr.core.FragmentAssembler
 import org.kurron.traits.GenerationAbility
+import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.beans.factory.annotation.Value
 import org.springframework.boot.test.SpringApplicationContextLoader
 import org.springframework.boot.test.TestRestTemplate
 import org.springframework.boot.test.WebIntegrationTest
+import org.springframework.data.mongodb.core.MongoOperations
+import org.springframework.data.mongodb.core.query.Query
 import org.springframework.http.HttpEntity
 import org.springframework.http.HttpHeaders
 import org.springframework.http.HttpMethod
 import org.springframework.http.HttpStatus
 import org.springframework.test.context.ContextConfiguration
 import org.springframework.web.util.UriComponentsBuilder
+import org.yaml.snakeyaml.DumperOptions
+import org.yaml.snakeyaml.Yaml
 import spock.lang.Specification
 
 /**
@@ -45,16 +53,39 @@ class DescriptorGatewayIntegrationTest extends Specification implements Generati
 
     private def template = new TestRestTemplate()
 
+    @Autowired
+    FragmentAssembler assembler
+
+    @Autowired
+    MongoOperations mongodb
+
+    def setup() {
+        assert mongodb
+        mongodb.collectionNames.findAll { !it.startsWith( 'system.' ) }.each {
+            mongodb.remove( new Query(), it )
+        }
+
+        assert assembler
+        10.times {
+            def fragment = new DockerComposeFragment( applications: (1..3).collect { randomHexString() },
+                                                      release: randomHexString(),
+                                                      version: randomHexString(),
+                                                      fragment: createYml() )
+            assembler.assemble( fragment )
+        }
+    }
 
     def 'verify GET /descriptor/application'() {
-        given: 'the port was injected'
+        given: 'a proper testing environment'
         assert port
+        assert assembler
 
-        when: 'we GET /descriptor/descriptor'
+        when: 'we GET /descriptor/application'
         def response = template.exchange( buildURI( '/descriptor/application' ), HttpMethod.GET, buildRequest(), HypermediaControl )
 
         then: 'we get a list of applications in the system'
         HttpStatus.OK == response.statusCode
+        response.body.applications
     }
 
     private static HttpEntity buildRequest() {
@@ -64,6 +95,28 @@ class DescriptorGatewayIntegrationTest extends Specification implements Generati
     }
 
     private URI buildURI( String path ) {
-        UriComponentsBuilder.newInstance(  ).scheme( 'http' ).host( 'localhost' ).port( port ).path( path ).build().toUri()
+        UriComponentsBuilder.newInstance().scheme( 'http' ).host( 'localhost' ).port( port ).path( path ).build().toUri()
     }
+
+    byte[] createYml() {
+        def options = new DumperOptions()
+        options.canonical = false
+        options.indent = 4
+        options.defaultFlowStyle = DumperOptions.FlowStyle.BLOCK
+        options.defaultScalarStyle = DumperOptions.ScalarStyle.PLAIN
+        options.prettyFlow = true
+        def parser = new Yaml( options )
+        def redisMap = ['redis': ['image': 'redis',
+                                  'container_name': 'redis',
+                                  'volumes_from': ['redis-data'],
+                                  'restart': 'always',
+                                  'ports': ['6379:6379'],
+                                  'labels': ['com.example.revision': '0'],
+                                  'net': 'host']]
+
+        use( StringEnhancements ) { ->
+            parser.dump( redisMap ).utf8Bytes
+        }
+    }
+
 }
