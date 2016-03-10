@@ -17,31 +17,21 @@
 package org.kurron.dcr.inbound
 
 import static org.kurron.dcr.inbound.HypermediaControl.MIME_TYPE
-import java.time.Instant
 import javax.servlet.http.HttpServletRequest
 import org.kurron.categories.ByteArrayEnhancements
-import org.kurron.dcr.outbound.DockerComposeDescriptorGateway
 import org.kurron.stereotype.InboundRestGateway
-import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.http.HttpStatus
 import org.springframework.http.ResponseEntity
 import org.springframework.web.bind.annotation.PathVariable
 import org.springframework.web.bind.annotation.RequestMapping
 import org.springframework.web.bind.annotation.RequestMethod
-import org.springframework.web.servlet.HandlerMapping
 
 /**
  * Inbound HTTP gateway that supports the Docker Compose descriptor resource.
  **/
 @InboundRestGateway
 @RequestMapping( path = '/descriptor' )
-class DescriptorGateway {
-
-    /**
-     * Knows how to access the persistence store.
-     */
-    @Autowired
-    private DockerComposeDescriptorGateway gateway
+class DescriptorGateway extends BaseGateway {
 
     @RequestMapping( path = '/application', method = [RequestMethod.GET], consumes = [MIME_TYPE], produces = [MIME_TYPE] )
     ResponseEntity<HypermediaControl> fetchApplicationList( HttpServletRequest request ) {
@@ -86,10 +76,5 @@ class DescriptorGateway {
             }
         }
         new ResponseEntity<HypermediaControl>( control, optional.present ? HttpStatus.OK : HttpStatus.NOT_FOUND )
-    }
-
-    private static HypermediaControl defaultControl( HttpServletRequest request ) {
-        def path = request.getAttribute( HandlerMapping.PATH_WITHIN_HANDLER_MAPPING_ATTRIBUTE )
-        new HypermediaControl( status: HttpStatus.OK.value(), timestamp: Instant.now().toString(), path: path )
     }
 }

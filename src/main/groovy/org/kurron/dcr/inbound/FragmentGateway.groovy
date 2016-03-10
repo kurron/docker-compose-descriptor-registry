@@ -31,7 +31,7 @@ import org.springframework.web.bind.annotation.RestController
  **/
 @RestController
 @RequestMapping( path = '/fragment', consumes = [MIME_TYPE], produces = [MIME_TYPE] )
-class FragmentGateway {
+class FragmentGateway extends BaseGateway {
 
     @RequestMapping( method = [PUT] )
     ResponseEntity<HypermediaControl> addFragment( @RequestBody @Valid HypermediaControl input ) {
