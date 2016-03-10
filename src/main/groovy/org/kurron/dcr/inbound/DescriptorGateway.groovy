@@ -58,8 +58,8 @@ class DescriptorGateway {
     }
 
     @RequestMapping( path = '/application/{application}/{release}', method = [RequestMethod.GET],  consumes = [MIME_TYPE], produces = [MIME_TYPE] )
-    ResponseEntity<HypermediaControl> fetchVersionList( @RequestParam( name = 'application' ) String application,
-                                                        @RequestParam( name = 'release' ) String release ) {
+    ResponseEntity<HypermediaControl> fetchVersionList( @PathVariable String application,
+                                                        @PathVariable String release ) {
         def control = defaultControl()
         control.applications = [application]
         control.releases = [release]

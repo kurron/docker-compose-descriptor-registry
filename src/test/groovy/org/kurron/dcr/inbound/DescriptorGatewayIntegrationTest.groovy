@@ -98,13 +98,30 @@ class DescriptorGatewayIntegrationTest extends Specification implements Generati
 
         when: 'we GET /descriptor/application/{application}'
         def application = fragments.first().applications.first()
-        def uri = buildURI( '/descriptor/application/{application}', ['application': application] )
+        def uri = buildURI( '/descriptor/application/{application}', [application: application] )
         def response = template.exchange( uri, HttpMethod.GET, buildRequest(), HypermediaControl )
 
         then: 'we get a list of applications in the system'
         HttpStatus.OK == response.statusCode
         response.body.applications
         response.body.releases
+    }
+
+    def 'verify GET /descriptor/application/{application}/{release}'() {
+        given: 'a proper testing environment'
+        assert port
+
+        when: 'we GET /descriptor/application/{application}/{release}'
+        def application = fragments.first().applications.first()
+        def release = fragments.first().release
+        def uri = buildURI( '/descriptor/application/{application}/{release}', [application: application, release: release] )
+        def response = template.exchange( uri, HttpMethod.GET, buildRequest(), HypermediaControl )
+
+        then: 'we get a list of applications in the system'
+        HttpStatus.OK == response.statusCode
+        response.body.applications
+        response.body.releases
+        response.body.versions
     }
 
     private static HttpEntity buildRequest() {
