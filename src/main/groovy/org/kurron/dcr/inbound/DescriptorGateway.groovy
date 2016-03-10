@@ -27,7 +27,6 @@ import org.springframework.http.ResponseEntity
 import org.springframework.web.bind.annotation.PathVariable
 import org.springframework.web.bind.annotation.RequestMapping
 import org.springframework.web.bind.annotation.RequestMethod
-import org.springframework.web.bind.annotation.RequestParam
 
 /**
  * Inbound HTTP gateway that supports the Docker Compose descriptor resource.
@@ -68,9 +67,9 @@ class DescriptorGateway {
     }
 
     @RequestMapping( path = '/application/{application}/{release}/{version}', method = [RequestMethod.GET], produces = [MIME_TYPE]  )
-    ResponseEntity<HypermediaControl> fetchDescriptor( @RequestParam( name = 'application' ) String application,
-                                                       @RequestParam( name = 'release' ) String release,
-                                                       @RequestParam( name = 'version' ) Integer version ) {
+    ResponseEntity<HypermediaControl> fetchDescriptor( @PathVariable String application,
+                                                       @PathVariable String release,
+                                                       @PathVariable Integer version ) {
         def control = defaultControl()
         control.applications = [application]
         control.releases = [release]

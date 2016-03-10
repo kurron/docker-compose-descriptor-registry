@@ -87,7 +87,7 @@ class DescriptorGatewayIntegrationTest extends Specification implements Generati
         def uri = buildURI( '/descriptor/application', [:] )
         def response = template.exchange( uri, HttpMethod.GET, buildRequest(), HypermediaControl )
 
-        then: 'we get a list of applications in the system'
+        then: 'we get a proper response'
         HttpStatus.OK == response.statusCode
         response.body.applications
     }
@@ -101,7 +101,7 @@ class DescriptorGatewayIntegrationTest extends Specification implements Generati
         def uri = buildURI( '/descriptor/application/{application}', [application: application] )
         def response = template.exchange( uri, HttpMethod.GET, buildRequest(), HypermediaControl )
 
-        then: 'we get a list of applications in the system'
+        then: 'we get a proper response'
         HttpStatus.OK == response.statusCode
         response.body.applications
         response.body.releases
@@ -117,11 +117,37 @@ class DescriptorGatewayIntegrationTest extends Specification implements Generati
         def uri = buildURI( '/descriptor/application/{application}/{release}', [application: application, release: release] )
         def response = template.exchange( uri, HttpMethod.GET, buildRequest(), HypermediaControl )
 
-        then: 'we get a list of applications in the system'
+        then: 'we get a proper response'
         HttpStatus.OK == response.statusCode
         response.body.applications
         response.body.releases
         response.body.versions
+    }
+
+    def 'verify GET /descriptor/application/{application}/{release}/{version}'() {
+        given: 'a proper testing environment'
+        assert port
+
+        when: 'we GET /descriptor/application/{application}/{release}/{version}'
+        def application = fragments.first().applications.first()
+        def release = fragments.first().release
+        def version = loadVersion( application, release )
+        def uri = buildURI( '/descriptor/application/{application}/{release}/{version}', [application: application, release: release, version: version] )
+        def response = template.exchange( uri, HttpMethod.GET, buildRequest(), HypermediaControl )
+
+        then: 'we get a proper response'
+        HttpStatus.OK == response.statusCode
+        response.body.applications
+        response.body.releases
+        response.body.versions
+        response.body.descriptor
+    }
+
+    Integer loadVersion( String application, String release ) {
+        def uri = buildURI( '/descriptor/application/{application}/{release}', [application: application, release: release] )
+        def response = template.exchange( uri, HttpMethod.GET, buildRequest(), HypermediaControl )
+        assert response.statusCode == HttpStatus.OK
+        response.body.versions.first()
     }
 
     private static HttpEntity buildRequest() {
