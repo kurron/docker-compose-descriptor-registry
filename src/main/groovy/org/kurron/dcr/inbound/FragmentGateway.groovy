@@ -18,24 +18,24 @@ package org.kurron.dcr.inbound
 
 import static org.kurron.dcr.inbound.HypermediaControl.MIME_TYPE
 import static org.springframework.web.bind.annotation.RequestMethod.PUT
-import java.time.Clock
+import javax.servlet.http.HttpServletRequest
 import javax.validation.Valid
-import org.springframework.http.HttpStatus
+import org.kurron.stereotype.InboundRestGateway
 import org.springframework.http.ResponseEntity
 import org.springframework.web.bind.annotation.RequestBody
 import org.springframework.web.bind.annotation.RequestMapping
-import org.springframework.web.bind.annotation.RestController
 
 /**
  * Inbound HTTP gateway that supports the Docker Compose fragment resource.
  **/
-@RestController
+@InboundRestGateway
 @RequestMapping( path = '/fragment', consumes = [MIME_TYPE], produces = [MIME_TYPE] )
 class FragmentGateway extends BaseGateway {
 
     @RequestMapping( method = [PUT] )
-    ResponseEntity<HypermediaControl> addFragment( @RequestBody @Valid HypermediaControl input ) {
-        def control = new HypermediaControl( status: HttpStatus.OK.value(), timestamp: Clock.systemDefaultZone().instant() as String )
+    ResponseEntity<HypermediaControl> addFragment( HttpServletRequest request,
+                                                   @RequestBody @Valid HypermediaControl input ) {
+        def control = defaultControl( request )
         ResponseEntity.ok( control )
     }
 }

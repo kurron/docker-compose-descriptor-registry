@@ -30,12 +30,9 @@ import org.springframework.boot.test.TestRestTemplate
 import org.springframework.boot.test.WebIntegrationTest
 import org.springframework.data.mongodb.core.MongoOperations
 import org.springframework.data.mongodb.core.query.Query
-import org.springframework.http.HttpEntity
-import org.springframework.http.HttpHeaders
 import org.springframework.http.HttpMethod
 import org.springframework.http.HttpStatus
 import org.springframework.test.context.ContextConfiguration
-import org.springframework.web.util.UriComponentsBuilder
 import org.yaml.snakeyaml.DumperOptions
 import org.yaml.snakeyaml.Yaml
 import spock.lang.Specification
@@ -46,7 +43,7 @@ import spock.lang.Specification
 @Category( InboundIntegrationTest )
 @WebIntegrationTest( randomPort = true )
 @ContextConfiguration( classes = Application, loader = SpringApplicationContextLoader )
-class DescriptorGatewayIntegrationTest extends Specification implements GenerationAbility {
+class DescriptorGatewayIntegrationTest extends Specification implements GenerationAbility, RestCapable {
 
     @Value( '${local.server.port}' )
     int port
@@ -83,7 +80,7 @@ class DescriptorGatewayIntegrationTest extends Specification implements Generati
         assert port
 
         when: 'we GET /descriptor/application'
-        def uri = buildURI( '/descriptor/application', [:] )
+        def uri = buildURI( port, '/descriptor/application', [:] )
         def response = template.exchange( uri, HttpMethod.GET, buildRequest(), HypermediaControl )
 
         then: 'we get a proper response'
@@ -97,7 +94,7 @@ class DescriptorGatewayIntegrationTest extends Specification implements Generati
 
         when: 'we GET /descriptor/application/{application}'
         def application = fragments.first().applications.first()
-        def uri = buildURI( '/descriptor/application/{application}', [application: application] )
+        def uri = buildURI( port, '/descriptor/application/{application}', [application: application] )
         def response = template.exchange( uri, HttpMethod.GET, buildRequest(), HypermediaControl )
 
         then: 'we get a proper response'
@@ -113,7 +110,7 @@ class DescriptorGatewayIntegrationTest extends Specification implements Generati
         when: 'we GET /descriptor/application/{application}/{release}'
         def application = fragments.first().applications.first()
         def release = fragments.first().release
-        def uri = buildURI( '/descriptor/application/{application}/{release}', [application: application, release: release] )
+        def uri = buildURI( port, '/descriptor/application/{application}/{release}', [application: application, release: release] )
         def response = template.exchange( uri, HttpMethod.GET, buildRequest(), HypermediaControl )
 
         then: 'we get a proper response'
@@ -131,7 +128,7 @@ class DescriptorGatewayIntegrationTest extends Specification implements Generati
         def application = fragments.first().applications.first()
         def release = fragments.first().release
         def version = loadVersion( application, release )
-        def uri = buildURI( '/descriptor/application/{application}/{release}/{version}', [application: application, release: release, version: version] )
+        def uri = buildURI( port, '/descriptor/application/{application}/{release}/{version}', [application: application, release: release, version: version] )
         def response = template.exchange( uri, HttpMethod.GET, buildRequest(), HypermediaControl )
 
         then: 'we get a proper response'
@@ -143,21 +140,10 @@ class DescriptorGatewayIntegrationTest extends Specification implements Generati
     }
 
     Integer loadVersion( String application, String release ) {
-        def uri = buildURI( '/descriptor/application/{application}/{release}', [application: application, release: release] )
+        def uri = buildURI( port, '/descriptor/application/{application}/{release}', [application: application, release: release] )
         def response = template.exchange( uri, HttpMethod.GET, buildRequest(), HypermediaControl )
         assert response.statusCode == HttpStatus.OK
         response.body.versions.first()
-    }
-
-    private static HttpEntity buildRequest() {
-        def headers = new HttpHeaders()
-        headers.setContentType( HypermediaControl.MEDIA_TYPE )
-        headers.setAccept( [HypermediaControl.MEDIA_TYPE] )
-        new HttpEntity( headers )
-    }
-
-    private URI buildURI( String path, Map variables ) {
-        UriComponentsBuilder.newInstance().scheme( 'http' ).host( 'localhost' ).port( port ).path( path ).buildAndExpand( variables ).toUri()
     }
 
     byte[] createYml() {
