@@ -32,7 +32,7 @@ class BaseGateway {
     protected DockerComposeDescriptorGateway gateway
 
     protected static HypermediaControl defaultControl( HttpServletRequest request ) {
-        def path = request.getAttribute( HandlerMapping.PATH_WITHIN_HANDLER_MAPPING_ATTRIBUTE )
+        def path = request.getAttribute( HandlerMapping.PATH_WITHIN_HANDLER_MAPPING_ATTRIBUTE ) as String
         new HypermediaControl( status: HttpStatus.OK.value(), timestamp: Instant.now().toString(), path: path )
     }
 }

@@ -17,6 +17,7 @@
 package org.kurron.dcr.inbound
 
 import static org.kurron.dcr.inbound.HypermediaControl.MIME_TYPE
+import groovy.transform.CompileDynamic
 import javax.servlet.http.HttpServletRequest
 import org.kurron.categories.ByteArrayEnhancements
 import org.kurron.stereotype.InboundRestGateway
@@ -60,6 +61,7 @@ class DescriptorGateway extends BaseGateway {
     }
 
     @RequestMapping( path = '/application/{application}/{release}/{version}', method = [RequestMethod.GET], produces = [MIME_TYPE]  )
+    @CompileDynamic // the use of Traits require this 8-(
     ResponseEntity<HypermediaControl> fetchDescriptor( HttpServletRequest request,
                                                        @PathVariable String application,
                                                        @PathVariable String release,

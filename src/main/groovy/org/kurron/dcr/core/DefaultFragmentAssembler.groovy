@@ -16,6 +16,7 @@
 
 package org.kurron.dcr.core
 
+import groovy.transform.CompileDynamic
 import org.kurron.categories.StringEnhancements
 import org.kurron.dcr.DockerComposeDescriptor
 import org.kurron.dcr.DockerComposeFragment
@@ -58,6 +59,7 @@ class DefaultFragmentAssembler implements FragmentAssembler {
         descriptor.descriptor = convertToYmlBytes( descriptorYml )
     }
 
+    @CompileDynamic // the use of Traits require this 8-(
     private static byte[] convertToYmlBytes( Map descriptorYml ) {
         def options = new DumperOptions()
         options.canonical = false
