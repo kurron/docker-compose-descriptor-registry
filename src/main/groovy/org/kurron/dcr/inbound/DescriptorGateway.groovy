@@ -18,6 +18,7 @@ package org.kurron.dcr.inbound
 
 import static org.kurron.dcr.inbound.HypermediaControl.MIME_TYPE
 import java.time.Instant
+import javax.servlet.http.HttpServletRequest
 import org.kurron.categories.ByteArrayEnhancements
 import org.kurron.dcr.outbound.DockerComposeDescriptorGateway
 import org.kurron.stereotype.InboundRestGateway
@@ -27,6 +28,7 @@ import org.springframework.http.ResponseEntity
 import org.springframework.web.bind.annotation.PathVariable
 import org.springframework.web.bind.annotation.RequestMapping
 import org.springframework.web.bind.annotation.RequestMethod
+import org.springframework.web.servlet.HandlerMapping
 
 /**
  * Inbound HTTP gateway that supports the Docker Compose descriptor resource.
@@ -42,24 +44,25 @@ class DescriptorGateway {
     private DockerComposeDescriptorGateway gateway
 
     @RequestMapping( path = '/application', method = [RequestMethod.GET], consumes = [MIME_TYPE], produces = [MIME_TYPE] )
-    ResponseEntity<HypermediaControl> fetchApplicationList() {
-        def control = defaultControl()
+    ResponseEntity<HypermediaControl> fetchApplicationList( HttpServletRequest request ) {
+        def control = defaultControl( request )
         control.applications = gateway.distinctApplications()
         ResponseEntity.ok( control )
     }
 
     @RequestMapping( path = '/application/{application}', method = [RequestMethod.GET],  consumes = [MIME_TYPE], produces = [MIME_TYPE] )
-    ResponseEntity<HypermediaControl> fetchReleasesList( @PathVariable String application ) {
-        def control = defaultControl()
+    ResponseEntity<HypermediaControl> fetchReleasesList(  HttpServletRequest request, @PathVariable String application ) {
+        def control = defaultControl( request )
         control.applications = [application]
         control.releases = gateway.distinctReleases( application )
         ResponseEntity.ok( control )
     }
 
     @RequestMapping( path = '/application/{application}/{release}', method = [RequestMethod.GET],  consumes = [MIME_TYPE], produces = [MIME_TYPE] )
-    ResponseEntity<HypermediaControl> fetchVersionList( @PathVariable String application,
+    ResponseEntity<HypermediaControl> fetchVersionList( HttpServletRequest request,
+                                                        @PathVariable String application,
                                                         @PathVariable String release ) {
-        def control = defaultControl()
+        def control = defaultControl( request )
         control.applications = [application]
         control.releases = [release]
         control.versions = gateway.distinctVersions( application, release )
@@ -67,10 +70,11 @@ class DescriptorGateway {
     }
 
     @RequestMapping( path = '/application/{application}/{release}/{version}', method = [RequestMethod.GET], produces = [MIME_TYPE]  )
-    ResponseEntity<HypermediaControl> fetchDescriptor( @PathVariable String application,
+    ResponseEntity<HypermediaControl> fetchDescriptor( HttpServletRequest request,
+                                                       @PathVariable String application,
                                                        @PathVariable String release,
                                                        @PathVariable Integer version ) {
-        def control = defaultControl()
+        def control = defaultControl( request )
         control.applications = [application]
         control.releases = [release]
         control.versions = [version]
@@ -84,7 +88,8 @@ class DescriptorGateway {
         new ResponseEntity<HypermediaControl>( control, optional.present ? HttpStatus.OK : HttpStatus.NOT_FOUND )
     }
 
-    private static HypermediaControl defaultControl() {
-        new HypermediaControl( status: HttpStatus.OK.value(), timestamp: Instant.now().toString() )
+    private static HypermediaControl defaultControl( HttpServletRequest request ) {
+        def path = request.getAttribute( HandlerMapping.PATH_WITHIN_HANDLER_MAPPING_ATTRIBUTE )
+        new HypermediaControl( status: HttpStatus.OK.value(), timestamp: Instant.now().toString(), path: path )
     }
 }
