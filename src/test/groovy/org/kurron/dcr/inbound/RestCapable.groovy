@@ -37,7 +37,7 @@ trait RestCapable {
     }
 
     /**
-     * Constructs an request with only the proper headers filled in -- no body.
+     * Constructs a request with only the proper headers filled in -- no body.
      * @return constructed request.
      */
     HttpEntity buildRequest() {
@@ -45,5 +45,17 @@ trait RestCapable {
         headers.setContentType( HypermediaControl.MEDIA_TYPE )
         headers.setAccept( [HypermediaControl.MEDIA_TYPE] )
         new HttpEntity( headers )
+    }
+
+    /**
+     * Constructs a request with the headers and body properly filled in.
+     * @param control the body of the request.
+     * @return constructed request.
+     */
+    HttpEntity<HypermediaControl> buildRequest( HypermediaControl control ) {
+        def headers = new HttpHeaders()
+        headers.setContentType( HypermediaControl.MEDIA_TYPE )
+        headers.setAccept( [HypermediaControl.MEDIA_TYPE] )
+        new HttpEntity<HypermediaControl>( control, headers )
     }
 }

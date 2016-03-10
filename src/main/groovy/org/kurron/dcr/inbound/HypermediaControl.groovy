@@ -80,10 +80,9 @@ class HypermediaControl extends ResourceSupport {
     List<String> releases
 
     /**
-     * As input, the single version the fragment should be associated with. As output, the collection of all available versions.
+     * Output only, the collection of all available versions.
      */
     @JsonProperty( 'versions' )
-    @NotNull
     List<Integer> versions
 
     /**

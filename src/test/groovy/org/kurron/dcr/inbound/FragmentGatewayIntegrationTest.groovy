@@ -38,7 +38,7 @@ import spock.lang.Specification
 @Category( InboundIntegrationTest )
 @WebIntegrationTest( randomPort = true )
 @ContextConfiguration( classes = Application, loader = SpringApplicationContextLoader )
-class FragmentGatewayIntegrationTest extends Specification implements GenerationAbility, RestCapable {
+class FragmentGatewayIntegrationTest extends Specification implements GenerationAbility, RestCapable, YamlCapable {
 
     @Value( '${local.server.port}' )
     int port
@@ -55,13 +55,16 @@ class FragmentGatewayIntegrationTest extends Specification implements Generation
         }
     }
 
-    def 'verify PUT //fragment'() {
+    def 'verify PUT /fragment'() {
         given: 'a proper testing environment'
         assert port
 
         when: 'we PUT /fragment'
-        def uri = buildURI( port, '/descriptor/application', [:] )
-        def response = template.exchange( uri, HttpMethod.PUT, buildRequest(), HypermediaControl )
+        def uri = buildURI( port, '/fragment', [:] )
+        def control = new HypermediaControl( fragment: createYmlBase64(),
+                                             applications: [randomHexString()],
+                                             releases: [randomHexString()] )
+        def response = template.exchange( uri, HttpMethod.PUT, buildRequest( control ), HypermediaControl )
 
         then: 'we get a proper response'
         HttpStatus.OK == response.statusCode
