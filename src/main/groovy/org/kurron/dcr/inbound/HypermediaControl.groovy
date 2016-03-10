@@ -21,6 +21,7 @@ import groovy.transform.Canonical
 import javax.validation.constraints.NotNull
 import org.hibernate.validator.constraints.NotEmpty
 import org.springframework.hateoas.ResourceSupport
+import org.springframework.http.MediaType
 
 /**
  * The hypermedia object returned by all services.
@@ -29,9 +30,9 @@ import org.springframework.hateoas.ResourceSupport
 class HypermediaControl extends ResourceSupport {
 
     /**
-     * The MIME-TYPE of the control.
+     * The object form of the control's MIME-TYPE.
      */
-    static final String MIME_TYPE = 'application/hal+json'
+    static final MediaType MIME_TYPE = MediaType.parseMediaType( 'application/hal+json' )
 
     /**
      * HTTP status of the service, response-only.
