@@ -31,17 +31,17 @@ import org.springframework.web.bind.annotation.RequestMethod
  * Inbound HTTP gateway that supports the Docker Compose descriptor resource.
  **/
 @InboundRestGateway
-@RequestMapping( path = '/descriptor' )
+@RequestMapping
 class DescriptorGateway extends BaseGateway {
 
-    @RequestMapping( path = '/application', method = [RequestMethod.GET], consumes = [MIME_TYPE], produces = [MIME_TYPE] )
+    @RequestMapping( path = '/descriptor/application', method = [RequestMethod.GET], consumes = [MIME_TYPE], produces = [MIME_TYPE] )
     ResponseEntity<HypermediaControl> fetchApplicationList( HttpServletRequest request ) {
         def control = defaultControl( request )
         control.applications = gateway.distinctApplications()
         ResponseEntity.ok( control )
     }
 
-    @RequestMapping( path = '/application/{application}', method = [RequestMethod.GET],  consumes = [MIME_TYPE], produces = [MIME_TYPE] )
+    @RequestMapping( path = '/descriptor/application/{application}', method = [RequestMethod.GET],  consumes = [MIME_TYPE], produces = [MIME_TYPE] )
     ResponseEntity<HypermediaControl> fetchReleasesList( HttpServletRequest request, @PathVariable String application ) {
         def control = defaultControl( request )
         control.applications = [application]
@@ -49,7 +49,7 @@ class DescriptorGateway extends BaseGateway {
         ResponseEntity.ok( control )
     }
 
-    @RequestMapping( path = '/application/{application}/{release}', method = [RequestMethod.GET],  consumes = [MIME_TYPE], produces = [MIME_TYPE] )
+    @RequestMapping( path = '/descriptor/application/{application}/{release}', method = [RequestMethod.GET],  consumes = [MIME_TYPE], produces = [MIME_TYPE] )
     ResponseEntity<HypermediaControl> fetchVersionList( HttpServletRequest request,
                                                         @PathVariable String application,
                                                         @PathVariable String release ) {
@@ -60,7 +60,7 @@ class DescriptorGateway extends BaseGateway {
         ResponseEntity.ok( control )
     }
 
-    @RequestMapping( path = '/application/{application}/{release}/{version}', method = [RequestMethod.GET], produces = [MIME_TYPE]  )
+    @RequestMapping( path = '/descriptor/application/{application}/{release}/{version}', method = [RequestMethod.GET], produces = [MIME_TYPE]  )
     @CompileDynamic // the use of Traits require this 8-(
     ResponseEntity<HypermediaControl> fetchDescriptor( HttpServletRequest request,
                                                        @PathVariable String application,

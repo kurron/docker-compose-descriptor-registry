@@ -38,7 +38,6 @@
     </appender>
 
     <logger name="com.transparent" level="ALL"/>
-    <logger name="org.springframework.data" level="DEBUG"/>
 
     <!-- handles sending messages using background threads -->
     <appender name="ASYNC-CONSOLE" class="ch.qos.logback.classic.AsyncAppender">
