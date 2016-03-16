@@ -40,7 +40,6 @@ currentDir.eachFileMatch(  ~/.*.yml/ ) {
 
         response.success = { resp, reader ->
             println "Success! ${resp.status}"
-            System.out << reader
         }
 
         response.failure = { resp ->
