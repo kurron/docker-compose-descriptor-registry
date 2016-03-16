@@ -62,13 +62,14 @@ class FragmentGatewayIntegrationTest extends Specification implements Generation
         when: 'we PUT /fragment'
         def uri = buildURI( port, '/fragment', [:] )
         def control = new HypermediaControl( fragment: createYmlBase64(),
-                                             applications: [randomHexString()],
+                                             applications: [randomHexString(), randomHexString()],
                                              releases: [randomHexString()] )
         def response = template.exchange( uri, HttpMethod.PUT, buildRequest( control ), HypermediaControl )
 
         then: 'we get a proper response'
         HttpStatus.OK == response.statusCode
-        response.body.applications
+        control.applications == response.body.applications
+        control.releases == response.body.releases
     }
 
 }

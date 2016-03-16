@@ -51,7 +51,7 @@ class FragmentGateway extends BaseGateway {
         def control = defaultControl( request )
         def descriptors = theAssembler.assemble( toFragment( input ) )
         control.applications = descriptors*.application
-        control.releases = descriptors*.release
+        control.releases = descriptors*.release.unique()
         ResponseEntity.ok( control )
     }
 
