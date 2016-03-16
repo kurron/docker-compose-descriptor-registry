@@ -42,7 +42,7 @@ class DescriptorGateway extends BaseGateway {
     }
 
     @RequestMapping( path = '/application/{application}', method = [RequestMethod.GET],  consumes = [MIME_TYPE], produces = [MIME_TYPE] )
-    ResponseEntity<HypermediaControl> fetchReleasesList(  HttpServletRequest request, @PathVariable String application ) {
+    ResponseEntity<HypermediaControl> fetchReleasesList( HttpServletRequest request, @PathVariable String application ) {
         def control = defaultControl( request )
         control.applications = [application]
         control.releases = gateway.distinctReleases( application )
