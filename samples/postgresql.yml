@@ -1,0 +1,19 @@
+postgresql-data:
+  image: busybox
+  container_name: postgresql-data
+  volumes:
+      - /var/lib/postgresql/data
+
+postgresql:
+  image: postgres
+  container_name: postgresql
+  net: host
+  volumes_from:
+      - postgresql-data
+  restart: always
+  ports:
+      - "5432:5432"
+  environment:
+      POSTGRES_USER: postgresql
+      POSTGRES_PASSWORD: postgresql
+      PGDATA: /var/lib/postgresql/data

@@ -1,0 +1,21 @@
+transmission-data:
+  image: busybox
+  container_name: transmission-data
+  command: "true"
+  volumes:
+      - /var/lib/transmission-daemon
+
+transmission:
+  image: dperson/transmission
+  container_name: transmission
+  volumes_from:
+      - transmission-data
+  restart: always
+  net: host
+  ports:
+      - "9091:9091"
+      - "51413:51413"
+  environment:
+      TRUSER: admin
+      TRPASSWD: admin
+      TIMEZONE: UTC

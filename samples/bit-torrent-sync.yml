@@ -1,0 +1,18 @@
+bittorrent-sync-data:
+  image: busybox
+  container_name: bittorrent-sync-data
+  command: "true"
+  volumes:
+      - /mnt/bookkeeping
+      - /mnt/sync
+
+bittorrent-sync:
+  image: kurron/docker-bittorrent-sync
+  container_name: bittorrent-sync
+  volumes_from:
+      - bittorrent-sync-data
+  restart: always
+  net: host
+  ports:
+      - "1234:1234"
+      - "8888:8888"

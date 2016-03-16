@@ -1,0 +1,19 @@
+plex-data:
+  image: busybox
+  container_name: plex-data
+  command: "true"
+  volumes:
+      - /config
+
+plex:
+  image: timhaak/plex
+  container_name: plex
+  restart: always
+  net: host
+  ports:
+      - "32400:32400"
+  volumes_from:
+      - plex-data
+      - bittorrent-sync-data
+  volumes:
+      - /mnt/nas:/data
