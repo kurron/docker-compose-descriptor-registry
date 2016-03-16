@@ -85,6 +85,19 @@ class DescriptorGatewayIntegrationTest extends Specification implements Generati
         response.body.applications
     }
 
+    def 'verify GET /rundeck/application'() {
+        given: 'a proper testing environment'
+        assert port
+
+        when: 'we GET /rundeck/application'
+        def uri = buildURI( port, '/rundeck/application', [:] )
+        def response = template.exchange( uri, HttpMethod.GET, buildRequest(), String )
+
+        then: 'we get a proper response'
+        HttpStatus.OK == response.statusCode
+        response.body
+    }
+
     def 'verify GET /descriptor/application/{application}'() {
         given: 'a proper testing environment'
         assert port
@@ -98,6 +111,20 @@ class DescriptorGatewayIntegrationTest extends Specification implements Generati
         HttpStatus.OK == response.statusCode
         response.body.applications
         response.body.releases
+    }
+
+    def 'verify GET /rundeck/application/{application}'() {
+        given: 'a proper testing environment'
+        assert port
+
+        when: 'we GET /rundeck/application/{application}'
+        def application = fragments.first().applications.first()
+        def uri = buildURI( port, '/rundeck/application/{application}', [application: application] )
+        def response = template.exchange( uri, HttpMethod.GET, buildRequest(), String )
+
+        then: 'we get a proper response'
+        HttpStatus.OK == response.statusCode
+        response.body
     }
 
     def 'verify GET /descriptor/application/{application}/{release}'() {
@@ -115,6 +142,21 @@ class DescriptorGatewayIntegrationTest extends Specification implements Generati
         response.body.applications
         response.body.releases
         response.body.versions
+    }
+
+    def 'verify GET /rundeck/application/{application}/{release}'() {
+        given: 'a proper testing environment'
+        assert port
+
+        when: 'we GET /rundeck/application/{application}/{release}'
+        def application = fragments.first().applications.first()
+        def release = fragments.first().release
+        def uri = buildURI( port, '/rundeck/application/{application}/{release}', [application: application, release: release] )
+        def response = template.exchange( uri, HttpMethod.GET, buildRequest(), String )
+
+        then: 'we get a proper response'
+        HttpStatus.OK == response.statusCode
+        response.body
     }
 
     def 'verify GET /descriptor/application/{application}/{release}/{version}'() {

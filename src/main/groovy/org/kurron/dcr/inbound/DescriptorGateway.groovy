@@ -22,6 +22,7 @@ import javax.servlet.http.HttpServletRequest
 import org.kurron.categories.ByteArrayEnhancements
 import org.kurron.stereotype.InboundRestGateway
 import org.springframework.http.HttpStatus
+import org.springframework.http.MediaType
 import org.springframework.http.ResponseEntity
 import org.springframework.web.bind.annotation.PathVariable
 import org.springframework.web.bind.annotation.RequestMapping
@@ -34,14 +35,14 @@ import org.springframework.web.bind.annotation.RequestMethod
 @RequestMapping
 class DescriptorGateway extends BaseGateway {
 
-    @RequestMapping( path = '/descriptor/application', method = [RequestMethod.GET], consumes = [MIME_TYPE], produces = [MIME_TYPE] )
+    @RequestMapping( path = '/descriptor/application', method = [RequestMethod.GET], produces = [MIME_TYPE] )
     ResponseEntity<HypermediaControl> fetchApplicationList( HttpServletRequest request ) {
         def control = defaultControl( request )
         control.applications = gateway.distinctApplications()
         ResponseEntity.ok( control )
     }
 
-    @RequestMapping( path = '/descriptor/application/{application}', method = [RequestMethod.GET],  consumes = [MIME_TYPE], produces = [MIME_TYPE] )
+    @RequestMapping( path = '/descriptor/application/{application}', method = [RequestMethod.GET],  produces = [MIME_TYPE] )
     ResponseEntity<HypermediaControl> fetchReleasesList( HttpServletRequest request, @PathVariable String application ) {
         def control = defaultControl( request )
         control.applications = [application]
@@ -49,7 +50,7 @@ class DescriptorGateway extends BaseGateway {
         ResponseEntity.ok( control )
     }
 
-    @RequestMapping( path = '/descriptor/application/{application}/{release}', method = [RequestMethod.GET],  consumes = [MIME_TYPE], produces = [MIME_TYPE] )
+    @RequestMapping( path = '/descriptor/application/{application}/{release}', method = [RequestMethod.GET], produces = [MIME_TYPE] )
     ResponseEntity<HypermediaControl> fetchVersionList( HttpServletRequest request,
                                                         @PathVariable String application,
                                                         @PathVariable String release ) {
@@ -79,4 +80,27 @@ class DescriptorGateway extends BaseGateway {
         }
         new ResponseEntity<HypermediaControl>( control, optional.present ? HttpStatus.OK : HttpStatus.NOT_FOUND )
     }
+
+    // ------------ Rundeck variants -----------------
+
+    @RequestMapping( path = '/rundeck/application', method = [RequestMethod.GET], produces = [MediaType.APPLICATION_JSON_VALUE] )
+    ResponseEntity<List<String>> fetchApplicationList() {
+        def applications = gateway.distinctApplications()
+        ResponseEntity.ok( applications )
+    }
+
+    @RequestMapping( path = '/rundeck/application/{application}', method = [RequestMethod.GET], produces = [MIME_TYPE] )
+    ResponseEntity<List<String>> fetchReleasesList( @PathVariable String application ) {
+        def releases = gateway.distinctReleases( application )
+        ResponseEntity.ok( releases )
+    }
+
+    @RequestMapping( path = '/rundeck/application/{application}/{release}', method = [RequestMethod.GET], produces = [MIME_TYPE] )
+    ResponseEntity<List<String>> fetchVersionList( @PathVariable String application,
+                                                        @PathVariable String release ) {
+        def versions = gateway.distinctVersions( application, release ).collect { it.toString() }
+        ResponseEntity.ok( versions )
+    }
+
+
 }
