@@ -50,8 +50,12 @@ class FragmentGateway extends BaseGateway {
                                                    @RequestBody @Valid HypermediaControl input ) {
         def control = defaultControl( request )
         def descriptors = theAssembler.assemble( toFragment( input ) )
-        control.applications = descriptors*.application
+        control.applications = descriptors*.application.sort()
         control.releases = descriptors*.release.unique()
+
+        // there should only be one release, let's verify
+        // TODO: figure out what to do if the assumption fails
+        1 == control.releases.size()
         ResponseEntity.ok( control )
     }
 

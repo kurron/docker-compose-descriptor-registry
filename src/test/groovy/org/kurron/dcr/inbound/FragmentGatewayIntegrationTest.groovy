@@ -68,7 +68,7 @@ class FragmentGatewayIntegrationTest extends Specification implements Generation
 
         then: 'we get a proper response'
         HttpStatus.OK == response.statusCode
-        control.applications == response.body.applications
+        control.applications.sort() == response.body.applications
         control.releases == response.body.releases
     }
 
