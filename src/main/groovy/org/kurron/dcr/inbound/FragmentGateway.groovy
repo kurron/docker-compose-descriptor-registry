@@ -20,7 +20,10 @@ import static org.kurron.dcr.inbound.HypermediaControl.MIME_TYPE
 import static org.springframework.web.bind.annotation.RequestMethod.PUT
 import javax.servlet.http.HttpServletRequest
 import javax.validation.Valid
+import org.kurron.dcr.DockerComposeFragment
+import org.kurron.dcr.core.FragmentAssembler
 import org.kurron.stereotype.InboundRestGateway
+import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.http.ResponseEntity
 import org.springframework.web.bind.annotation.RequestBody
 import org.springframework.web.bind.annotation.RequestMapping
@@ -32,10 +35,35 @@ import org.springframework.web.bind.annotation.RequestMapping
 @RequestMapping( path = '/fragment', consumes = [MIME_TYPE], produces = [MIME_TYPE] )
 class FragmentGateway extends BaseGateway {
 
+    /**
+     * Responsible for combining the fragment into a complete descriptor.
+     */
+    private final FragmentAssembler theAssembler
+
+    @Autowired
+    FragmentGateway( final FragmentAssembler anAssembler ) {
+        theAssembler = anAssembler
+    }
+
     @RequestMapping( method = [PUT] )
     ResponseEntity<HypermediaControl> addFragment( HttpServletRequest request,
                                                    @RequestBody @Valid HypermediaControl input ) {
         def control = defaultControl( request )
+        def descriptors = theAssembler.assemble( toFragment( input ) )
+        control.applications = descriptors*.application
+        control.releases = descriptors*.release
         ResponseEntity.ok( control )
+    }
+
+    /**
+     * Transforms the PUT request into our domain model.
+     * @param input HTTP request to pick apart.
+     * @return newly constructed domain object.
+     */
+    static DockerComposeFragment toFragment( HypermediaControl input ) {
+        assert 1 == input.releases.size()
+        new DockerComposeFragment( applications: input.applications,
+                                   release: input.releases.first(),
+                                   fragment: input.fragment.decodeBase64() )
     }
 }
