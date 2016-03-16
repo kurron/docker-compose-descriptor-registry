@@ -34,7 +34,7 @@ currentDir.eachFileMatch(  ~/.*.yml/ ) {
     def jsonBuilder = new JsonBuilder( map )
     def json = jsonBuilder.toPrettyString()
 
-    def http = new HTTPBuilder( 'http://localhost:9090/fragment' )
+    def http = new HTTPBuilder( 'http://localhost:8080/fragment' )
     http.request( PUT, JSON ) { req ->
         body = json
 
