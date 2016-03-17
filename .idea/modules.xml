@@ -2,7 +2,9 @@
 <project version="4">
   <component name="ProjectModuleManager">
     <modules>
-      <module fileurl="file://$PROJECT_DIR$/docker-compose-registry.iml" filepath="$PROJECT_DIR$/docker-compose-registry.iml" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/docker-compose-registry.iml" filepath="$PROJECT_DIR$/.idea/modules/docker-compose-registry.iml" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/docker-compose-registry_main.iml" filepath="$PROJECT_DIR$/.idea/modules/docker-compose-registry_main.iml" group="docker-compose-registry" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/docker-compose-registry_test.iml" filepath="$PROJECT_DIR$/.idea/modules/docker-compose-registry_test.iml" group="docker-compose-registry" />
     </modules>
   </component>
 </project>
