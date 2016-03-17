@@ -8,7 +8,7 @@ spring:
     jackson:
         serialization:
             indent_output: true
-        serialization-inclusion: non_null
+        serialization-inclusion: non_empty
 
 management:
     context-path: /operations
