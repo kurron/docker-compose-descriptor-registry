@@ -30,7 +30,7 @@ import org.springframework.test.context.ContextConfiguration
 import spock.lang.Specification
 
 /**
- * Learning test to see how easy it is to buld download descriptors.
+ * Learning test to see how easy it is to build download descriptors.
  */
 @Category( InboundIntegrationTest )
 @WebIntegrationTest( randomPort = true )
