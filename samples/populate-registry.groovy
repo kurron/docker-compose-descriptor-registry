@@ -30,7 +30,7 @@ def files = []
 currentDir.eachFileMatch(  ~/.*.yml/ ) {
     files << it.name
 
-    def map = [applications: ['A','B','C','D'], releases: ['Milestone'], fragment: it.getBytes().encodeBase64().toString()]
+    def map = [applications: ['TLO GE','TLO EE','TLO LE','Asgard Lite'], releases: ['Milestone'], fragment: it.getBytes().encodeBase64().toString()]
     def jsonBuilder = new JsonBuilder( map )
     def json = jsonBuilder.toPrettyString()
 
