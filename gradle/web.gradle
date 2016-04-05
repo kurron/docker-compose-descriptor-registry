@@ -29,11 +29,13 @@ dependencies {
     testCompile('org.springframework.restdocs:spring-restdocs-mockmvc')
 }
 
+/*
 dependencyManagement {
     imports {
         mavenBom "com.vaadin:vaadin-bom:${vaadinVersion}"
     }
 }
+*/
 
 //TODO: only works if the Groovy plugin has previously been included.  Should probably check.
 task documentationTests( type: Test ) {

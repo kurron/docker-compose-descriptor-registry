@@ -23,4 +23,7 @@
       <module name="docker-compose-registry_test" target="1.8" />
     </bytecodeTargetLevel>
   </component>
+  <component name="JavacSettings">
+    <option name="ADDITIONAL_OPTIONS_STRING" value="-Xmx512m" />
+  </component>
 </project>
