@@ -54,7 +54,7 @@ class DefaultFragmentAssembler implements FragmentAssembler {
     private static void replaceFragmentInDescriptor( DockerComposeDescriptor descriptor, DockerComposeFragment fragment ) {
         def descriptorYml = parseYml( descriptor.descriptor )
         def fragmentYml = parseYml( fragment.fragment )
-        fragmentYml.keySet().each { String key ->
+        fragmentYml.keySet().each { key ->
             descriptorYml.put( key, fragmentYml[key] )
         }
         descriptor.descriptor = convertToYmlBytes( descriptorYml )
