@@ -17,16 +17,17 @@
 package org.kurron.dcr.inbound
 
 import static org.kurron.dcr.inbound.HypermediaControl.MIME_TYPE
+import static org.springframework.http.HttpStatus.NOT_FOUND
+import static org.springframework.http.HttpStatus.OK
 import static org.springframework.http.MediaType.APPLICATION_JSON_VALUE
+import static org.springframework.web.bind.annotation.RequestMethod.GET
 import groovy.transform.CompileDynamic
 import javax.servlet.http.HttpServletRequest
 import org.kurron.categories.ByteArrayEnhancements
 import org.kurron.stereotype.InboundRestGateway
-import org.springframework.http.HttpStatus
 import org.springframework.http.ResponseEntity
 import org.springframework.web.bind.annotation.PathVariable
 import org.springframework.web.bind.annotation.RequestMapping
-import org.springframework.web.bind.annotation.RequestMethod
 
 /**
  * Inbound HTTP gateway that supports the Docker Compose descriptor resource.
@@ -35,14 +36,14 @@ import org.springframework.web.bind.annotation.RequestMethod
 @RequestMapping
 class DescriptorGateway extends BaseGateway {
 
-    @RequestMapping( path = '/descriptor/stacks', method = [RequestMethod.GET], produces = [MIME_TYPE] )
+    @RequestMapping( path = '/descriptor/stacks', method = [GET], produces = [MIME_TYPE] )
     ResponseEntity<HypermediaControl> fetchApplicationList( HttpServletRequest request ) {
         def control = defaultControl( request )
         control.stacks = gateway.distinctApplications()
         ResponseEntity.ok( control )
     }
 
-    @RequestMapping( path = '/descriptor/stack/{stack}', method = [RequestMethod.GET],  produces = [MIME_TYPE] )
+    @RequestMapping( path = '/descriptor/stack/{stack}', method = [GET],  produces = [MIME_TYPE] )
     ResponseEntity<HypermediaControl> fetchReleasesList( HttpServletRequest request, @PathVariable String stack ) {
         def control = defaultControl( request )
         control.stacks = [stack]
@@ -50,7 +51,7 @@ class DescriptorGateway extends BaseGateway {
         ResponseEntity.ok( control )
     }
 
-    @RequestMapping( path = '/descriptor/stack/{stack}/{release}', method = [RequestMethod.GET], produces = [MIME_TYPE] )
+    @RequestMapping( path = '/descriptor/stack/{stack}/{release}', method = [GET], produces = [MIME_TYPE] )
     ResponseEntity<HypermediaControl> fetchVersionList( HttpServletRequest request,
                                                         @PathVariable String stack,
                                                         @PathVariable String release ) {
@@ -61,7 +62,7 @@ class DescriptorGateway extends BaseGateway {
         ResponseEntity.ok( control )
     }
 
-    @RequestMapping( path = '/descriptor/stack/{stack}/{release}/{version}', method = [RequestMethod.GET], produces = [MIME_TYPE]  )
+    @RequestMapping( path = '/descriptor/stack/{stack}/{release}/{version}', method = [GET], produces = [MIME_TYPE]  )
     @CompileDynamic // the use of Traits require this 8-(
     ResponseEntity<HypermediaControl> fetchDescriptor( HttpServletRequest request,
                                                        @PathVariable String stack,
@@ -72,30 +73,30 @@ class DescriptorGateway extends BaseGateway {
         control.releases = [release]
         control.versions = [version]
         def optional = gateway.findOne( stack, release, version )
-        control.status = optional.present ? HttpStatus.OK.value() : HttpStatus.NOT_FOUND.value()
+        control.status = optional.present ? OK.value() : NOT_FOUND.value()
         optional.ifPresent { descriptor ->
             control.descriptor = use( ByteArrayEnhancements ) { ->
                 descriptor.descriptor.toStringBase64()
             }
         }
-        new ResponseEntity<HypermediaControl>( control, optional.present ? HttpStatus.OK : HttpStatus.NOT_FOUND )
+        new ResponseEntity<HypermediaControl>( control, optional.present ? OK : NOT_FOUND )
     }
 
     // ------------ Rundeck variants -----------------
 
-    @RequestMapping( path = '/rundeck/stacks', method = [RequestMethod.GET], produces = [APPLICATION_JSON_VALUE, MIME_TYPE] )
+    @RequestMapping( path = '/rundeck/stacks', method = [GET], produces = [APPLICATION_JSON_VALUE, MIME_TYPE] )
     ResponseEntity<List<String>> fetchApplicationList() {
         def applications = gateway.distinctApplications()
         ResponseEntity.ok( applications )
     }
 
-    @RequestMapping( path = '/rundeck/stack/{stack}', method = [RequestMethod.GET], produces = [APPLICATION_JSON_VALUE, MIME_TYPE] )
+    @RequestMapping( path = '/rundeck/stack/{stack}', method = [GET], produces = [APPLICATION_JSON_VALUE, MIME_TYPE] )
     ResponseEntity<List<String>> fetchReleasesList( @PathVariable String stack ) {
         def releases = gateway.distinctReleases( stack )
         ResponseEntity.ok( releases )
     }
 
-    @RequestMapping( path = '/rundeck/stack/{stack}/{release}', method = [RequestMethod.GET], produces = [APPLICATION_JSON_VALUE, MIME_TYPE] )
+    @RequestMapping( path = '/rundeck/stack/{stack}/{release}', method = [GET], produces = [APPLICATION_JSON_VALUE, MIME_TYPE] )
     ResponseEntity<List<String>> fetchVersionList( @PathVariable String stack,
                                                    @PathVariable String release ) {
         def versions = gateway.distinctVersions( stack, release ).collect { it.toString() }
