@@ -50,7 +50,7 @@ class DescriptorGatewayDownloadLearningTest extends Specification implements Gen
         def applicationURI = buildURI( port, '/descriptor/application', [:] )
         def applicationResponse = template.exchange( applicationURI, HttpMethod.GET, buildRequest(), HypermediaControl )
         assert HttpStatus.OK == applicationResponse.statusCode
-        def applications = applicationResponse.body.applications
+        def applications = applicationResponse.body.stacks
 
         and: 'the list of available releases'
         def releases = applications.collect {

@@ -44,7 +44,7 @@ class DefaultFragmentAssembler implements FragmentAssembler {
 
     @Override
     List<DockerComposeDescriptor> assemble( final DockerComposeFragment fragment ) {
-        fragment.applications.collect { application ->
+        fragment.stacks.collect { application ->
             def descriptor = loadDescriptor( application, fragment )
             replaceFragmentInDescriptor( descriptor, fragment )
             persistDescriptor( application, fragment.release, descriptor )

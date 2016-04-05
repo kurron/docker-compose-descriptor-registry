@@ -35,8 +35,8 @@ class DockerComposeFragment {
     String release
 
     /**
-     * The collection of applications that this fragment is associated with.  For example,
+     * The collection of application stacks that this fragment is associated with.  For example,
      * "reporting application" or "firewall".
      */
-    List<String> applications
+    List<String> stacks
 }

@@ -52,7 +52,7 @@ class FragmentGateway extends BaseGateway {
                                                    @RequestBody @Valid HypermediaControl input ) {
         def control = defaultControl( request )
         def descriptors = theAssembler.assemble( toFragment( input ) )
-        control.applications = descriptors*.application.sort()
+        control.stacks = descriptors*.application.sort()
         control.releases = descriptors*.release.unique()
 
         // there should only be one release, let's verify
@@ -68,7 +68,7 @@ class FragmentGateway extends BaseGateway {
      */
     static DockerComposeFragment toFragment( HypermediaControl input ) {
         assert 1 == input.releases.size()
-        new DockerComposeFragment( applications: input.applications,
+        new DockerComposeFragment( stacks: input.stacks,
                                    release: input.releases.first(),
                                    fragment: input.fragment.decodeBase64() )
     }

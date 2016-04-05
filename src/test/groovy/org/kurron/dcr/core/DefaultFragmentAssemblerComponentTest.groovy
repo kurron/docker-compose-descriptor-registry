@@ -62,7 +62,7 @@ class DefaultFragmentAssemblerComponentTest extends Specification implements Gen
         def applications = (1..3).collect { randomHexString() }
         def release = randomHexString()
         def yml = createYml()
-        def fragment = new DockerComposeFragment( applications: applications, release: release, fragment: yml )
+        def fragment = new DockerComposeFragment( stacks: applications, release: release, fragment: yml )
 
         when: 'we add it to the system'
         def results = sut.assemble( fragment )
@@ -89,15 +89,15 @@ class DefaultFragmentAssemblerComponentTest extends Specification implements Gen
         def release = randomHexString()
 
         and: 'add the Redis fragment'
-        def redis = new DockerComposeFragment( applications: applications, release: release, fragment: createYml( '10', false ) )
+        def redis = new DockerComposeFragment( stacks: applications, release: release, fragment: createYml( '10', false ) )
         sut.assemble( redis )
 
         and: 'add the MongoDB fragment'
-        def mongoDB = new DockerComposeFragment( applications: applications, release: release, fragment: createYml( '10' ) )
+        def mongoDB = new DockerComposeFragment( stacks: applications, release: release, fragment: createYml( '10' ) )
         sut.assemble( mongoDB )
 
         when: 'we add another MongoDB fragment'
-        def fragment = new DockerComposeFragment( applications: applications, release: release, fragment: createYml( '20' ) )
+        def fragment = new DockerComposeFragment( stacks: applications, release: release, fragment: createYml( '20' ) )
         def results = sut.assemble( fragment )
 
         then: 'we get descriptors for each application'

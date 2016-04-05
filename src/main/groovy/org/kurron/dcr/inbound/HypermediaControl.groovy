@@ -65,12 +65,12 @@ class HypermediaControl extends ResourceSupport {
     String fragment
 
     /**
-     * As input, the collection of applications this fragment should be associated with. As output, the collection of all available applications.
+     * As input, the collection of application stacks this fragment should be associated with. As output, the collection of all available application stacks.
      */
-    @JsonProperty( 'applications' )
+    @JsonProperty( 'stacks' )
     @NotNull
     @NotEmpty
-    List<String> applications
+    List<String> stacks
 
     /**
      * As input, the single release the fragment should be associated with. As output, the collection of all available releases.
