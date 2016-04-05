@@ -19,7 +19,7 @@ package org.kurron.dcr.outbound
 import static org.springframework.data.mongodb.core.FindAndModifyOptions.options
 import static org.springframework.data.mongodb.core.query.Criteria.where
 import static org.springframework.data.mongodb.core.query.Query.query
-import org.kurron.dcr.DockerComposeDescriptor
+import org.kurron.dcr.models.DockerComposeDescriptor
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.data.mongodb.core.MongoOperations
 import org.springframework.data.mongodb.core.query.Update

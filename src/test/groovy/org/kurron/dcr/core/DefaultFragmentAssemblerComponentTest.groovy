@@ -21,7 +21,7 @@ import org.kurron.categories.ByteArrayEnhancements
 import org.kurron.categories.ComponentTest
 import org.kurron.categories.StringEnhancements
 import org.kurron.dcr.Application
-import org.kurron.dcr.DockerComposeFragment
+import org.kurron.dcr.models.DockerComposeFragment
 import org.kurron.traits.GenerationAbility
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.test.IntegrationTest

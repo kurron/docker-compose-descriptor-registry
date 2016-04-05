@@ -89,13 +89,13 @@ class DescriptorGateway extends BaseGateway {
         ResponseEntity.ok( applications )
     }
 
-    @RequestMapping( path = '/rundeck/application/{application}', method = [RequestMethod.GET], produces = [MIME_TYPE] )
+    @RequestMapping( path = '/rundeck/application/{application}', method = [RequestMethod.GET], produces = [MediaType.APPLICATION_JSON_VALUE] )
     ResponseEntity<List<String>> fetchReleasesList( @PathVariable String application ) {
         def releases = gateway.distinctReleases( application )
         ResponseEntity.ok( releases )
     }
 
-    @RequestMapping( path = '/rundeck/application/{application}/{release}', method = [RequestMethod.GET], produces = [MIME_TYPE] )
+    @RequestMapping( path = '/rundeck/application/{application}/{release}', method = [RequestMethod.GET], produces = [MediaType.APPLICATION_JSON_VALUE] )
     ResponseEntity<List<String>> fetchVersionList( @PathVariable String application,
                                                         @PathVariable String release ) {
         def versions = gateway.distinctVersions( application, release ).collect { it.toString() }

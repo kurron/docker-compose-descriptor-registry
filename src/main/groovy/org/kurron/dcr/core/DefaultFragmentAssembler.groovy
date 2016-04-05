@@ -18,8 +18,8 @@ package org.kurron.dcr.core
 
 import groovy.transform.CompileDynamic
 import org.kurron.categories.StringEnhancements
-import org.kurron.dcr.DockerComposeDescriptor
-import org.kurron.dcr.DockerComposeFragment
+import org.kurron.dcr.models.DockerComposeDescriptor
+import org.kurron.dcr.models.DockerComposeFragment
 import org.kurron.dcr.outbound.DockerComposeDescriptorGateway
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.stereotype.Service

@@ -19,7 +19,7 @@ package org.kurron.dcr.outbound
 import org.junit.experimental.categories.Category
 import org.kurron.categories.OutboundIntegrationTest
 import org.kurron.dcr.Application
-import org.kurron.dcr.DockerComposeDescriptor
+import org.kurron.dcr.models.DockerComposeDescriptor
 import org.kurron.traits.GenerationAbility
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.test.SpringApplicationContextLoader

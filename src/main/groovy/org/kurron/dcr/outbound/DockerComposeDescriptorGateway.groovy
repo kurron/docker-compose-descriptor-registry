@@ -17,7 +17,7 @@
 package org.kurron.dcr.outbound
 
 import org.bson.types.ObjectId
-import org.kurron.dcr.DockerComposeDescriptor
+import org.kurron.dcr.models.DockerComposeDescriptor
 import org.springframework.data.repository.PagingAndSortingRepository
 
 /**

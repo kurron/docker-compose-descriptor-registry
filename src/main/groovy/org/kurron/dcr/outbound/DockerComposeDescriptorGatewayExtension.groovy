@@ -16,7 +16,7 @@
 
 package org.kurron.dcr.outbound
 
-import org.kurron.dcr.DockerComposeDescriptor
+import org.kurron.dcr.models.DockerComposeDescriptor
 
 /**
  * Outbound gateway that knows how to interact with the persistence store.

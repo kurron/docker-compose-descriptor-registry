@@ -16,8 +16,8 @@
 
 package org.kurron.dcr.core
 
-import org.kurron.dcr.DockerComposeDescriptor
-import org.kurron.dcr.DockerComposeFragment
+import org.kurron.dcr.models.DockerComposeDescriptor
+import org.kurron.dcr.models.DockerComposeFragment
 
 /**
  * Knows how to combine Docker Compose fragments into a single file.

@@ -16,7 +16,6 @@
 
 package org.kurron.dcr.inbound
 
-import com.fasterxml.jackson.annotation.JsonInclude
 import com.fasterxml.jackson.annotation.JsonProperty
 import groovy.transform.Canonical
 import javax.validation.constraints.NotNull
@@ -28,15 +27,12 @@ import org.springframework.http.MediaType
  * The hypermedia object returned by all services.
  **/
 @Canonical
-// I shouldn't have to do this but Spring Boot is ignoring my configuration!
-@JsonInclude( JsonInclude.Include.NON_EMPTY )
 class HypermediaControl extends ResourceSupport {
 
     /**
      * The string form of the control's MIME-TYPE.
      */
-//  static final String MIME_TYPE = 'application/hal+json'
-    static final String MIME_TYPE = 'application/json'
+    static final String MIME_TYPE = 'application/hal+json'
 
     /**
      * The object form of the control's MIME-TYPE.

@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package org.kurron.dcr
+package org.kurron.dcr.models
 
 import groovy.transform.Canonical
 import org.bson.types.ObjectId

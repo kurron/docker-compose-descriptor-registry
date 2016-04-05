@@ -19,8 +19,8 @@ package org.kurron.dcr.inbound
 import org.junit.experimental.categories.Category
 import org.kurron.categories.InboundIntegrationTest
 import org.kurron.dcr.Application
-import org.kurron.dcr.DockerComposeFragment
 import org.kurron.dcr.core.FragmentAssembler
+import org.kurron.dcr.models.DockerComposeFragment
 import org.kurron.traits.GenerationAbility
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.beans.factory.annotation.Value
