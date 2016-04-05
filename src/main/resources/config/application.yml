@@ -19,8 +19,13 @@ endpoints:
     sensitive: false
 
 server:
-  port: 8080
-  contextPath: /
+    contextPath: /
+    port: 8080
+    useForwardHeaders: true
+    tomcat:
+        portHeader: X-Forwarded-Port
+        protocolHeader: X-Forwarded-Protocol-Header
+        remoteIpHeader: X-Forwarded-Remote-IP-Header
 
 # which logback configuration file to use
 logging:

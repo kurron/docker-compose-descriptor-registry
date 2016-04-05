@@ -17,6 +17,7 @@
 package org.kurron.dcr.inbound
 
 import static org.kurron.dcr.inbound.HypermediaControl.MIME_TYPE
+import static org.springframework.http.MediaType.APPLICATION_JSON_VALUE
 import static org.springframework.web.bind.annotation.RequestMethod.PUT
 import javax.servlet.http.HttpServletRequest
 import javax.validation.Valid
@@ -24,16 +25,16 @@ import org.kurron.dcr.core.FragmentAssembler
 import org.kurron.dcr.models.DockerComposeFragment
 import org.kurron.stereotype.InboundRestGateway
 import org.springframework.beans.factory.annotation.Autowired
-import org.springframework.http.MediaType
 import org.springframework.http.ResponseEntity
 import org.springframework.web.bind.annotation.RequestBody
 import org.springframework.web.bind.annotation.RequestMapping
 
 /**
- * Inbound HTTP gateway that supports the Docker Compose fragment resource.
+ * Inbound HTTP gateway that supports the Docker Compose fragment resource. We'll be a little more lenient on the Content-Type to
+ * make it more convenient on some of the testing tools.
  **/
 @InboundRestGateway
-@RequestMapping( path = '/fragment', consumes = [MIME_TYPE, MediaType.APPLICATION_JSON_VALUE], produces = [MIME_TYPE, MediaType.APPLICATION_JSON_VALUE] )
+@RequestMapping( path = '/fragment', consumes = [MIME_TYPE, APPLICATION_JSON_VALUE], produces = [MIME_TYPE, APPLICATION_JSON_VALUE] )
 class FragmentGateway extends BaseGateway {
 
     /**
