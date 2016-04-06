@@ -23,6 +23,8 @@ import static groovyx.net.http.ContentType.JSON
 import static groovyx.net.http.Method.PUT
 @Grab( 'org.codehaus.groovy.modules.http-builder:http-builder:0.7.1' )
 import groovy.json.JsonBuilder
+@Grab( 'org.codehaus.groovy.modules.http-builder:http-builder:0.7.1' )
+import groovy.json.JsonBuilder
 import groovyx.net.http.HTTPBuilder
 
 def currentDir = new File('.')
@@ -30,7 +32,7 @@ def files = []
 currentDir.eachFileMatch(  ~/.*.yml/ ) {
     files << it.name
 
-    def map = [applications: ['TLO GE','TLO EE','TLO LE','Asgard Lite'], releases: ['Milestone'], fragment: it.getBytes().encodeBase64().toString()]
+    def map = [stacks: ['TLO GE','TLO EE','TLO LE','Asgard Lite'], releases: ['Milestone'], fragment: it.getBytes().encodeBase64().toString()]
     def jsonBuilder = new JsonBuilder( map )
     def json = jsonBuilder.toPrettyString()
 
