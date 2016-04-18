@@ -69,7 +69,7 @@ class DefaultFragmentAssemblerComponentTest extends Specification implements Gen
 
         then: 'we get descriptors for each application'
         applications.every { application ->
-            results.find { it.application == application }
+            results.find { it.stack == application }
         }
 
         and: 'dump the descriptors for human examination'
@@ -102,7 +102,7 @@ class DefaultFragmentAssemblerComponentTest extends Specification implements Gen
 
         then: 'we get descriptors for each application'
         applications.every { application ->
-            results.find { it.application == application }
+            results.find { it.stack == application }
         }
 
         and: 'dump the descriptors for human examination'

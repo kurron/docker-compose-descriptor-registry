@@ -52,7 +52,7 @@ class FragmentGateway extends BaseGateway {
                                                    @RequestBody @Valid HypermediaControl input ) {
         def control = defaultControl( request )
         def descriptors = theAssembler.assemble( toFragment( input ) )
-        control.stacks = descriptors*.application.sort()
+        control.stacks = descriptors*.stack.sort()
         control.releases = descriptors*.release.unique()
 
         // there should only be one release, let's verify

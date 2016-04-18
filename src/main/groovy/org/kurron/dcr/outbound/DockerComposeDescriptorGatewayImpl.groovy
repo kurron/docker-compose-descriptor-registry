@@ -34,8 +34,8 @@ class DockerComposeDescriptorGatewayImpl implements DockerComposeDescriptorGatew
     private MongoOperations theTemplate
 
     @Override
-    int nextSequence( final String application, final String release ) {
-        def query = query( where( 'application' ).is( application ).and( 'release' ).is( release ) )
+    int nextSequence( final String stack, final String release ) {
+        def query = query( where( 'stack' ).is( stack ).and( 'release' ).is( release ) )
         def update = new Update().inc( 'counter', 1 )
         def options = options().upsert( true ).returnNew( true )
         DescriptorCounter updatedDocument = theTemplate.findAndModify( query, update, options, DescriptorCounter )
@@ -43,31 +43,31 @@ class DockerComposeDescriptorGatewayImpl implements DockerComposeDescriptorGatew
     }
 
     @Override
-    Optional<DockerComposeDescriptor> mostCurrent( final String application, final String release ) {
+    Optional<DockerComposeDescriptor> mostCurrent( final String stack, final String release ) {
         // the index is set up so that the highest version is the first in the collection
-        def query = query( where( 'application' ).is( application ).and( 'release' ).is( release ) )
+        def query = query( where( 'stack' ).is( stack ).and( 'release' ).is( release ) )
         def found = theTemplate.findOne( query, DockerComposeDescriptor )
         Optional.ofNullable( found )
     }
 
     @Override
-    List<String> distinctApplications() {
-        theTemplate.getCollection( theTemplate.getCollectionName( DockerComposeDescriptor ) ).distinct( 'application' )
+    List<String> distinctStacks() {
+        theTemplate.getCollection( theTemplate.getCollectionName( DockerComposeDescriptor ) ).distinct( 'stack' )
     }
 
     @Override
-    List<String> distinctReleases( final String application ) {
-        theTemplate.find( query( where( 'application' ).is( application ) ), DockerComposeDescriptor ).collect { it.release }.unique( false )
+    List<String> distinctReleases( final String stack ) {
+        theTemplate.find( query( where( 'stack' ).is( stack ) ), DockerComposeDescriptor ).collect { it.release }.unique( false )
     }
 
     @Override
-    List<Integer> distinctVersions( final String application, final String release ) {
-        theTemplate.find( query( where( 'application' ).is( application ).and( 'release' ).is( release ) ), DockerComposeDescriptor ).collect { it.version }.unique( false )
+    List<Integer> distinctVersions( final String stack, final String release ) {
+        theTemplate.find( query( where( 'stack' ).is( stack ).and( 'release' ).is( release ) ), DockerComposeDescriptor ).collect { it.version }.unique( false )
     }
 
     @Override
-    Optional<DockerComposeDescriptor> findOne( final String application, final String release, final Integer version ) {
-        DockerComposeDescriptor found = theTemplate.findOne( query( where( 'application' ).is( application ).and( 'release' ).is( release ).and( 'version' ).is( version ) ), DockerComposeDescriptor )
+    Optional<DockerComposeDescriptor> findOne( final String stack, final String release, final Integer version ) {
+        DockerComposeDescriptor found = theTemplate.findOne( query( where( 'stack' ).is( stack ).and( 'release' ).is( release ).and( 'version' ).is( version ) ), DockerComposeDescriptor )
         Optional.ofNullable( found )
     }
 

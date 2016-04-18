@@ -28,7 +28,7 @@ import org.springframework.data.mongodb.core.mapping.Document
  **/
 @Canonical
 @Document
-@CompoundIndexes( [@CompoundIndex( name = 'unique_index', def = "{ 'application': 1, 'release': 1, 'version': -1 }", unique = true )] )
+@CompoundIndexes( [@CompoundIndex( name = 'unique_index', def = "{ 'stack': 1, 'release': 1, 'version': -1 }", unique = true )] )
 class DockerComposeDescriptor {
 
     /**
@@ -38,10 +38,10 @@ class DockerComposeDescriptor {
     ObjectId id
 
     /**
-     * The application that this descriptor is associated with.  For example,
+     * The stack that this descriptor is associated with.  For example,
      * "storm".
      */
-    String application
+    String stack
 
     /**
      * The release this descriptor belongs to, eg. "milestone", "release", "rc", etc.

@@ -41,13 +41,13 @@ class DescriptorGateway extends BaseGateway {
     @RequestMapping( path = '/descriptor/stacks', method = [GET], produces = [MIME_TYPE] )
     ResponseEntity<HypermediaControl> fetchApplicationList( HttpServletRequest request ) {
         def control = defaultControl( request )
-        control.stacks = gateway.distinctApplications()
+        control.stacks = gateway.distinctStacks()
         ResponseEntity.ok( control )
     }
 
     @RequestMapping( path = '/descriptor/stacks', method = [GET], produces = [APPLICATION_JSON_VALUE] )
     ResponseEntity<List<String>> fetchApplicationList() {
-        def applications = gateway.distinctApplications()
+        def applications = gateway.distinctStacks()
         ResponseEntity.ok( applications )
     }
 

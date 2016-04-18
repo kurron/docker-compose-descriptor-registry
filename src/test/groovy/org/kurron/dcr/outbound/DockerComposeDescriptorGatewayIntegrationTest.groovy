@@ -55,7 +55,7 @@ class DockerComposeDescriptorGatewayIntegrationTest extends Specification implem
         assert sut
 
         when: 'we insert a document'
-        def toSave = new DockerComposeDescriptor( application: randomHexString(),
+        def toSave = new DockerComposeDescriptor( stack: randomHexString(),
                                                   release: randomHexString(),
                                                   version: randomPositiveInteger(),
                                                   descriptor: randomByteArray( 8 ) )
@@ -103,7 +103,7 @@ class DockerComposeDescriptorGatewayIntegrationTest extends Specification implem
         and: 'several documents are inserted into the database'
         def application = randomHexString()
         def release = randomHexString()
-        def toInsert = (1..1000).collect { new DockerComposeDescriptor( application: application, release: release, version: it ) }
+        def toInsert = (1..1000).collect { new DockerComposeDescriptor( stack: application, release: release, version: it ) }
         def inserted = sut.save( toInsert )
 
         when: 'we call mostCurrent'
@@ -126,13 +126,13 @@ class DockerComposeDescriptorGatewayIntegrationTest extends Specification implem
         def toSave = (1..100).collect {
             new DockerComposeDescriptor( release: randomHexString(),
                                          version: randomPositiveInteger(),
-                                         application: randomElement( possibleApplications ) as String,
+                                         stack: randomElement( possibleApplications ) as String,
                                          descriptor: randomByteArray( 8 ) )
         }
         sut.save( toSave )
 
         then: 'we can read out the distinct application values'
-        def distinct = sut.distinctApplications().sort( false )
+        def distinct = sut.distinctStacks().sort( false )
         distinct == possibleApplications
     }
 
@@ -144,13 +144,13 @@ class DockerComposeDescriptorGatewayIntegrationTest extends Specification implem
         def toSave = (1..100).collect {
             new DockerComposeDescriptor( release: randomElement( possibleReleases ) as String,
                                          version: randomPositiveInteger(),
-                                         application: randomElement( possibleApplications ) as String,
+                                         stack: randomElement( possibleApplications ) as String,
                                          descriptor: randomByteArray( 8 ) )
         }
         sut.save( toSave )
 
         then: 'we can read out the distinct release values'
-        def distinct = sut.distinctReleases( toSave.first().application ).sort( false )
+        def distinct = sut.distinctReleases( toSave.first().stack ).sort( false )
         distinct == possibleReleases
     }
 
@@ -162,15 +162,15 @@ class DockerComposeDescriptorGatewayIntegrationTest extends Specification implem
         def toSave = (1..100).collect {
             new DockerComposeDescriptor( release: randomElement( possibleReleases ) as String,
                                          version: randomElement( possibleVersions ) as Integer,
-                                         application: randomElement( possibleApplications ) as String,
+                                         stack: randomElement( possibleApplications ) as String,
                                          descriptor: randomByteArray( 8 ) )
         }
         sut.save( toSave )
 
         then: 'we can read out the distinct version values'
         def first = toSave.first()
-        def selected = toSave.findAll { it.application == first.application && it.release == first.release }.collect { it.version }.sort( false )
-        def distinct = sut.distinctVersions( first.application, first.release ).sort( false )
+        def selected = toSave.findAll { it.stack == first.stack && it.release == first.release }.collect { it.version }.sort( false )
+        def distinct = sut.distinctVersions( first.stack, first.release ).sort( false )
         selected == distinct
     }
 
@@ -182,12 +182,12 @@ class DockerComposeDescriptorGatewayIntegrationTest extends Specification implem
         def toSave = (1..10).collect {
             new DockerComposeDescriptor( release: randomElement( possibleReleases ) as String,
                                          version: randomElement( possibleVersions ) as Integer,
-                                         application: randomElement( possibleApplications ) as String,
+                                         stack: randomElement( possibleApplications ) as String,
                                          descriptor: randomByteArray( 8 ) )
         }
         // modify the first one so that there is only one of its type is in the db
         toSave.first().with {
-            application = randomHexString()
+            stack = randomHexString()
             release = randomHexString()
             version = randomPositiveInteger()
         }
@@ -195,7 +195,7 @@ class DockerComposeDescriptorGatewayIntegrationTest extends Specification implem
 
         then: 'we can read out the specific document'
         def first = toSave.first()
-        def found = sut.findOne( first.application, first.release, first.version ).get()
+        def found = sut.findOne( first.stack, first.release, first.version ).get()
         found == first
     }
 

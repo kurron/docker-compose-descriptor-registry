@@ -25,48 +25,48 @@ interface DockerComposeDescriptorGatewayExtension {
 
     /**
      * Obtains the next number in the sequence.
-     * @param application the application portion of the key.
+     * @param stack the stack portion of the key.
      * @param release the portion portion of the key.
      * @return next available sequence.
      */
-    int nextSequence( String application, String release )
+    int nextSequence( String stack, String release )
 
     /**
      * Obtains the descriptor with the highest version number value.
-     * @param application the application name to filter on.
+     * @param stack the stack name to filter on.
      * @param release the release name to filter on.
      * @return the located document.
      */
-    Optional<DockerComposeDescriptor> mostCurrent( String application, String release )
+    Optional<DockerComposeDescriptor> mostCurrent( String stack, String release )
 
     /**
-     * Constructs a collection of the distinct applications associated with the various descriptors in the database.
+     * Constructs a collection of the distinct stacks associated with the various descriptors in the database.
      * @return a collection of distinct applications.
      */
-    List<String> distinctApplications()
+    List<String> distinctStacks()
 
     /**
      * Constructs a collection of the distinct releases associated with a particular application.
-     * @param application the application name to query against.
+     * @param stack the stack name to query against.
      * @return a collection of distinct releases.
      */
-    List<String> distinctReleases( String application )
+    List<String> distinctReleases( String stack )
 
     /**
      * Constructs a collection of the distinct versions associated with a particular application and release.
-     * @param application the application name to query against.
+     * @param stack the stack name to query against.
      * @param release the release name to query against.
      * @return a collection of distinct versions.
      */
-    List<Integer> distinctVersions( String application, String release )
+    List<Integer> distinctVersions( String stack, String release )
 
     /**
      * Loads the specific descriptor from, the database.
-     * @param application the application name to query against.
+     * @param stack the stack name to query against.
      * @param release the release name to query against.
      * @param version the version to query against.
      * @return the loaded instance.
      */
-    Optional<DockerComposeDescriptor> findOne( String application, String release, Integer version )
+    Optional<DockerComposeDescriptor> findOne( String stack, String release, Integer version )
 
 }

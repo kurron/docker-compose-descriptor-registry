@@ -26,7 +26,7 @@ import org.springframework.data.mongodb.core.mapping.Document
  * This document provides an atomic counter for the descriptor's version.
  **/
 @Document
-@CompoundIndexes( [@CompoundIndex( name = 'unique_index', def = "{ 'application': 1, 'release': 1 }", unique = true )] )
+@CompoundIndexes( [@CompoundIndex( name = 'unique_index', def = "{ 'stack': 1, 'release': 1 }", unique = true )] )
 class DescriptorCounter {
 
     /**
@@ -36,10 +36,10 @@ class DescriptorCounter {
     ObjectId id
 
     /**
-     * The application that this counter is associated with.  For example,
+     * The stack that this counter is associated with.  For example,
      * "storm".
      */
-    String application
+    String stack
 
     /**
      * The release this counter belongs to, eg. "milestone", "release", "rc", etc.

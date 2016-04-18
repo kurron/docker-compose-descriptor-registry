@@ -93,6 +93,6 @@ class DefaultFragmentAssembler implements FragmentAssembler {
     }
 
     private static DockerComposeDescriptor initialDescriptor( String application, DockerComposeFragment fragment ) {
-        new DockerComposeDescriptor( application: application, release: fragment.release, descriptor: fragment.fragment )
+        new DockerComposeDescriptor( stack: application, release: fragment.release, descriptor: fragment.fragment )
     }
 }
