@@ -1,0 +1,14 @@
+version: '2'
+services:
+    ${projectName}:
+        build: .
+        labels:
+            org.kurron.built-on: "${generated}"
+            org.kurron.branch: "${branch}"
+            org.kurron.version: "${version}"
+        container_name: "${projectName}"
+        network_mode: "host"
+            environment:
+                JVM_HEAP_MAX: 768m
+                JVM_JMX_HOST: 127.0.0.1
+                JVM_JMX_PORT: 2020
