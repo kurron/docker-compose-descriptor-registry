@@ -34,7 +34,8 @@ enum MessagingContext implements FeedbackContext {
     MESSAGING_UPDATE( 1009, FeedbackLevel.INFO, Audience.QA, 'Sending {} to RabbitMQ' ),
     JUST_HEARD( 1010, FeedbackLevel.INFO, Audience.QA, 'Just heard {} from RabbitMQ' ),
     SAVING( 1011, FeedbackLevel.INFO, Audience.QA, 'Saving {} to MongoDB' ),
-    PROCESSING_RESOURCE( 1012, FeedbackLevel.DEBUG, Audience.QA, 'Processing resource {}' )
+    PROCESSING_RESOURCE( 1012, FeedbackLevel.DEBUG, Audience.QA, 'Processing resource {}' ),
+    RESOURCE_NOT_FOUND( 1013, FeedbackLevel.INFO, Audience.QA, 'The resource {} was not found.' )
 
     private final int code
     private final String formatString

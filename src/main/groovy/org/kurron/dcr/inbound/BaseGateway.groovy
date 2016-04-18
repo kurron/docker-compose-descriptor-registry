@@ -34,8 +34,11 @@ class BaseGateway extends AbstractFeedbackAware {
     protected DockerComposeDescriptorGateway gateway
 
     protected HypermediaControl defaultControl( HttpServletRequest request ) {
-        def path = request.getAttribute( HandlerMapping.PATH_WITHIN_HANDLER_MAPPING_ATTRIBUTE ) as String
-        feedbackProvider.sendFeedback( MessagingContext.PROCESSING_RESOURCE, path )
-        new HypermediaControl( status: HttpStatus.OK.value(), timestamp: Instant.now().toString(), path: path )
+        feedbackProvider.sendFeedback( MessagingContext.PROCESSING_RESOURCE, extractPath( request ) )
+        new HypermediaControl( status: HttpStatus.OK.value(), timestamp: Instant.now().toString(), path: extractPath( request ) )
+    }
+
+    protected String extractPath( HttpServletRequest request ) {
+        request.getAttribute( HandlerMapping.PATH_WITHIN_HANDLER_MAPPING_ATTRIBUTE ) as String
     }
 }

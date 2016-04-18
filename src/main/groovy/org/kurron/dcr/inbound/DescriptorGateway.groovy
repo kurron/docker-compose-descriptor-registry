@@ -22,8 +22,10 @@ import static org.springframework.http.HttpStatus.OK
 import static org.springframework.http.MediaType.APPLICATION_JSON_VALUE
 import static org.springframework.web.bind.annotation.RequestMethod.GET
 import groovy.transform.CompileDynamic
+import java.util.function.Supplier
 import javax.servlet.http.HttpServletRequest
 import org.kurron.categories.ByteArrayEnhancements
+import org.kurron.dcr.models.MessagingContext
 import org.kurron.stereotype.InboundRestGateway
 import org.springframework.http.ResponseEntity
 import org.springframework.web.bind.annotation.PathVariable
@@ -95,7 +97,9 @@ class DescriptorGateway extends BaseGateway {
         control.releases = [release]
         control.versions = [version]
         def optional = gateway.findOne( stack, release, version )
-        control.status = optional.present ? OK.value() : NOT_FOUND.value()
+        def error = { new ResourceNotFoundError( MessagingContext.RESOURCE_NOT_FOUND, extractPath( request ) ) } as Supplier<ResourceNotFoundError>
+        optional.orElseThrow( error )
+
         optional.ifPresent { descriptor ->
             control.descriptor = use( ByteArrayEnhancements ) { ->
                 descriptor.descriptor.toStringBase64()

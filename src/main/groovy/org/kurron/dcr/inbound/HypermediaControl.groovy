@@ -52,6 +52,12 @@ class HypermediaControl extends ResourceSupport {
     String timestamp
 
     /**
+     * Output only, where fault information is stored.
+     */
+    @JsonProperty( 'error' )
+    ErrorBlock errorBlock
+
+    /**
      * Relative path of the completed service, response-only.
      */
     @JsonProperty( 'path' )
