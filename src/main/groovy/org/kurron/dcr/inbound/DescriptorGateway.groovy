@@ -51,7 +51,6 @@ class DescriptorGateway extends BaseGateway {
         ResponseEntity.ok( applications )
     }
 
-
     @RequestMapping( path = '/descriptor/stack/{stack}', method = [GET],  produces = [MIME_TYPE] )
     ResponseEntity<HypermediaControl> fetchReleasesList( HttpServletRequest request, @PathVariable String stack ) {
         def control = defaultControl( request )

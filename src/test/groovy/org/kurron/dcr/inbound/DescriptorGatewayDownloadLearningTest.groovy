@@ -30,7 +30,8 @@ import org.springframework.test.context.ContextConfiguration
 import spock.lang.Specification
 
 /**
- * Learning test to see how easy it is to build download descriptors.
+ * Learning test to see how easy it is to build download descriptors. Expect the database to already be
+ * populated via populate-registry.groovy.
  */
 @Category( InboundIntegrationTest )
 @WebIntegrationTest( randomPort = true )
@@ -42,37 +43,37 @@ class DescriptorGatewayDownloadLearningTest extends Specification implements Gen
 
     private def template = new TestRestTemplate()
 
-    def 'verify GET /descriptor/application/{application}/{release}/{version}'() {
+    def 'verify GET /descriptor/stack/{stack}/{release}/{version}'() {
         given: 'a proper testing environment'
         assert port
 
-        and: 'the list of available applications'
-        def applicationURI = buildURI( port, '/descriptor/application', [:] )
-        def applicationResponse = template.exchange( applicationURI, HttpMethod.GET, buildRequest(), HypermediaControl )
+        and: 'the list of available stacks'
+        def applicationURI = buildURI( port, '/descriptor/stacks', [:] )
+        def applicationResponse = template.exchange( applicationURI, HttpMethod.GET, buildRequest( HypermediaControl.MEDIA_TYPE ), HypermediaControl )
         assert HttpStatus.OK == applicationResponse.statusCode
         def applications = applicationResponse.body.stacks
 
         and: 'the list of available releases'
         def releases = applications.collect {
-            def releaseURI = buildURI( port, '/descriptor/application/{application}', [application: it] )
-            def releaseResponse = template.exchange( releaseURI, HttpMethod.GET, buildRequest(), HypermediaControl )
+            def releaseURI = buildURI( port, '/descriptor/stack/{stack}', [stack: it] )
+            def releaseResponse = template.exchange( releaseURI, HttpMethod.GET, buildRequest( HypermediaControl.MEDIA_TYPE ), HypermediaControl )
             assert HttpStatus.OK == releaseResponse.statusCode
             releaseResponse.body.releases
         }.flatten().unique()
 
         and: 'the list of available versions'
         def versions = [applications, releases].combinations { application, release ->
-            def versionURI = buildURI( port, '/descriptor/application/{application}/{release}', [application: application, release: release] )
-            def versionResponse = template.exchange( versionURI, HttpMethod.GET, buildRequest(), HypermediaControl )
+            def versionURI = buildURI( port, '/descriptor/stack/{stack}/{release}', [stack: application, release: release] )
+            def versionResponse = template.exchange( versionURI, HttpMethod.GET, buildRequest( HypermediaControl.MEDIA_TYPE ), HypermediaControl )
             assert HttpStatus.OK == versionResponse.statusCode
             versionResponse.body.versions
         }.flatten().unique()
 
         when: 'we grab all of the descriptors'
 //      def descriptors = [applications, releases, versions].combinations { application, release, version ->
-        def descriptors = [['TLO GE'], ['Milestone'], versions].combinations { application, release, version ->
-            def uri = buildURI( port, '/descriptor/application/{application}/{release}/{version}', [application: application, release: release, version: version] )
-            def response = template.exchange( uri, HttpMethod.GET, buildRequest(), HypermediaControl )
+        def descriptors = [['TLO GE'], ['Milestone'], versions].combinations { stack, release, version ->
+            def uri = buildURI( port, '/descriptor/stack/{stack}/{release}/{version}', [stack: stack, release: release, version: version] )
+            def response = template.exchange( uri, HttpMethod.GET, buildRequest( HypermediaControl.MEDIA_TYPE ), HypermediaControl )
             assert HttpStatus.OK == response.statusCode
             response.body
         }
