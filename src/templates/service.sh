@@ -30,7 +30,7 @@ CMD="\$JAVA_HOME/bin/java \\
     -Dcom.sun.management.jmxremote.authenticate=false \\
     -Dcom.sun.management.jmxremote.ssl=false \\
     -Djava.awt.headless=true \\
-    -jar /opt/example/${projectName}.jar"
+    -jar /opt/${projectName}.jar"
 
 echo eval \$CMD
 eval \$CMD

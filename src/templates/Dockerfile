@@ -6,7 +6,7 @@ MAINTAINER Ron Kurr "kurr@kurron.org"
 
 LABEL org.kurron.built-on="${generated}" org.kurron.branch="${branch}" org.kurron.version="${version}"
 
-COPY ${projectName}.jar /opt/example/${projectName}.jar
+COPY ${projectName}.jar /opt/${projectName}.jar
 
 # HTTP port
 EXPOSE ${port}

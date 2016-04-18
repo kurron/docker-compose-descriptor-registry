@@ -76,7 +76,7 @@ task launchContainer( type: Exec, dependsOn: buildDockerImage ) {
     description = 'Runs an Ansible playbook that will launch the container for testing'
 
     def ansibleVars = toJsonEnvironmentDescriptor( version.toString() )
-    commandLine ansiblePlaybookPath, "$projectDir/ansible/deployment-playbook.yml", '--inventory', '127.0.0.1,', '--extra-vars', ansibleVars
+    commandLine ansiblePlaybookPath, "$projectDir/build/docker/playbook.yml", '--inventory', '127.0.0.1,', '--extra-vars', ansibleVars
     doFirst {
         logger.quiet "Running the Ansible deployment playbook to run container $containerName based on image $fullImageName"
     }
@@ -95,9 +95,12 @@ task launchContainer( type: Exec, dependsOn: buildDockerImage ) {
 }
 
 private String toJsonEnvironmentDescriptor( String tag ) {
-    def activeProfile = System.properties['spring.profiles.active'] as String
-    def args = activeProfile ? [ "--spring.profiles.active=$activeProfile" ] : []
-    new JsonBuilder( [server: 'localhost', user: ansibleSshUser, password: ansibleSshPassword, tag: tag, additional_jvm_arguments: args] ).toString()
+    def activeProfile = System.properties.getProperty( 'spring.profiles.active', 'default' ) as String
+    new JsonBuilder( [server: 'localhost',
+                      user: ansibleSshUser,
+                      password: ansibleSshPassword,
+                      tag: tag,
+                      spring_profiles: activeProfile] ).toString()
 }
 
 private void waitForServerToStart( int port ) {
