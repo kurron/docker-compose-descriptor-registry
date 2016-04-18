@@ -21,17 +21,10 @@ def containerName = project.name
 task copyDockerfile( type: Copy, dependsOn: bootRepackage ) {
     from 'src/templates'
     into "$dockerDirectory"
-    exclude '**/service.sh'
     expand( projectName: project.name, port: exposedPort, generated: new Date(), branch: branch, version: version )
 }
 
-task copyDockerfileServiceFile( type: Copy, dependsOn: bootRepackage ) {
-    from 'src/templates'
-    into "$dockerDirectory"
-    include '**/service.sh'
-}
-
-task copyBuildArtifact( type: Copy, dependsOn: [copyDockerfile, copyDockerfileServiceFile] ) {
+task copyBuildArtifact( type: Copy, dependsOn: [copyDockerfile] ) {
     def buildArtifactName = "${project.name}-${version}.jar"
     from( 'build/libs/' ) {
         include buildArtifactName
