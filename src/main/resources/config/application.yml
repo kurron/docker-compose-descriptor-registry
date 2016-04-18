@@ -62,6 +62,10 @@ dcr:
 
 ---
 spring:
-  profiles: bamboo
+    profiles: bamboo
+    data:
+        mongodb:
+            host: 10.0.2.15
+            database: ${name}-\${random.int[1,65536]}
 dcr:
     realm: bamboo
