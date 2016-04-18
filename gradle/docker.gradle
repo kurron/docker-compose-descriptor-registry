@@ -15,13 +15,13 @@
  */
 import groovy.json.JsonBuilder
 
-def fullImageName = "${dockerRegistry}/example-${project.name}:${version}"
+def fullImageName = "${dockerRegistry}/${project.name}:${version}"
 def containerName = project.name
 
 task copyDockerfile( type: Copy, dependsOn: bootRepackage ) {
     from 'src/templates'
     into "$dockerDirectory"
-    expand( projectName: project.name, port: exposedPort, generated: new Date(), branch: branch, version: version )
+    expand( projectName: project.name, port: exposedPort, generated: new Date(), branch: branch, version: version, dockerRegistry: dockerRegistry )
 }
 
 task copyBuildArtifact( type: Copy, dependsOn: [copyDockerfile] ) {
