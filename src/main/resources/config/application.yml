@@ -11,12 +11,17 @@ spring:
         serialization-inclusion: non_empty
 
 management:
-    context-path: /operations
+    contextPath: /operations
+    security:
+        enabled: false
+        role: admin
+        sessions: stateless
 
 # configure operations endpoints
 endpoints:
-  health:
-    sensitive: false
+    health:
+        time-to-live: 1000
+        sensitive: false
 
 server:
     contextPath: /
