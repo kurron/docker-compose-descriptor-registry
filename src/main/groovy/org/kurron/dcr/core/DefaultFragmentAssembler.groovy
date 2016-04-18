@@ -76,12 +76,9 @@ class DefaultFragmentAssembler implements FragmentAssembler {
 
     private static Map parseYml( byte[] yml ) {
         def parser = new Yaml()
-        Map parsed = [:]
         new ByteArrayInputStream( yml ).withStream {
-            // ugly side effect code but I didn't want to return in the middle of the closure -- not sure how safe that is
-            parsed = parser.load( it ) as Map
+            parser.load( it ) as Map
         }
-        parsed
     }
 
     private DockerComposeDescriptor persistDescriptor( String application, String release, DockerComposeDescriptor descriptor ) {
