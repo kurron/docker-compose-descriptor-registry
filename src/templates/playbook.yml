@@ -32,7 +32,7 @@
     container_port: 8080
     ports: "{{ host_port }}:{{ container_port }}"
     heap_size: 128m
-    mongodb_host: 127.0.0.1
+    mongodb_host: 10.0.2.15
     mongodb_port: 27017
     spring_profiles: default
 
