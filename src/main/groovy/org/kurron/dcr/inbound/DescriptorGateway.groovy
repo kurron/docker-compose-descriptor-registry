@@ -30,7 +30,9 @@ import org.springframework.web.bind.annotation.PathVariable
 import org.springframework.web.bind.annotation.RequestMapping
 
 /**
- * Inbound HTTP gateway that supports the Docker Compose descriptor resource.
+ * Inbound HTTP gateway that supports the Docker Compose descriptor resource.  Rundeck has particular
+ * formatting needs so it will only get application/json forms.  Other clients can use the hypermedia
+ * control.
  **/
 @InboundRestGateway
 @RequestMapping
@@ -43,6 +45,13 @@ class DescriptorGateway extends BaseGateway {
         ResponseEntity.ok( control )
     }
 
+    @RequestMapping( path = '/descriptor/stacks', method = [GET], produces = [APPLICATION_JSON_VALUE] )
+    ResponseEntity<List<String>> fetchApplicationList() {
+        def applications = gateway.distinctApplications()
+        ResponseEntity.ok( applications )
+    }
+
+
     @RequestMapping( path = '/descriptor/stack/{stack}', method = [GET],  produces = [MIME_TYPE] )
     ResponseEntity<HypermediaControl> fetchReleasesList( HttpServletRequest request, @PathVariable String stack ) {
         def control = defaultControl( request )
@@ -50,6 +59,13 @@ class DescriptorGateway extends BaseGateway {
         control.releases = gateway.distinctReleases( stack )
         ResponseEntity.ok( control )
     }
+
+    @RequestMapping( path = '/descriptor/stack/{stack}', method = [GET], produces = [APPLICATION_JSON_VALUE] )
+    ResponseEntity<List<String>> fetchReleasesList( @PathVariable String stack ) {
+        def releases = gateway.distinctReleases( stack )
+        ResponseEntity.ok( releases )
+    }
+
 
     @RequestMapping( path = '/descriptor/stack/{stack}/{release}', method = [GET], produces = [MIME_TYPE] )
     ResponseEntity<HypermediaControl> fetchVersionList( HttpServletRequest request,
@@ -60,6 +76,13 @@ class DescriptorGateway extends BaseGateway {
         control.releases = [release]
         control.versions = gateway.distinctVersions( stack, release )
         ResponseEntity.ok( control )
+    }
+
+    @RequestMapping( path = '/descriptor/stack/{stack}/{release}', method = [GET], produces = [APPLICATION_JSON_VALUE] )
+    ResponseEntity<List<String>> fetchVersionList( @PathVariable String stack,
+                                                   @PathVariable String release ) {
+        def versions = gateway.distinctVersions( stack, release ).collect { it.toString() }
+        ResponseEntity.ok( versions )
     }
 
     @RequestMapping( path = '/descriptor/stack/{stack}/{release}/{version}', method = [GET], produces = [MIME_TYPE]  )
@@ -81,27 +104,4 @@ class DescriptorGateway extends BaseGateway {
         }
         new ResponseEntity<HypermediaControl>( control, optional.present ? OK : NOT_FOUND )
     }
-
-    // ------------ Rundeck variants -----------------
-
-    @RequestMapping( path = '/rundeck/stacks', method = [GET], produces = [APPLICATION_JSON_VALUE, MIME_TYPE] )
-    ResponseEntity<List<String>> fetchApplicationList() {
-        def applications = gateway.distinctApplications()
-        ResponseEntity.ok( applications )
-    }
-
-    @RequestMapping( path = '/rundeck/stack/{stack}', method = [GET], produces = [APPLICATION_JSON_VALUE, MIME_TYPE] )
-    ResponseEntity<List<String>> fetchReleasesList( @PathVariable String stack ) {
-        def releases = gateway.distinctReleases( stack )
-        ResponseEntity.ok( releases )
-    }
-
-    @RequestMapping( path = '/rundeck/stack/{stack}/{release}', method = [GET], produces = [APPLICATION_JSON_VALUE, MIME_TYPE] )
-    ResponseEntity<List<String>> fetchVersionList( @PathVariable String stack,
-                                                   @PathVariable String release ) {
-        def versions = gateway.distinctVersions( stack, release ).collect { it.toString() }
-        ResponseEntity.ok( versions )
-    }
-
-
 }

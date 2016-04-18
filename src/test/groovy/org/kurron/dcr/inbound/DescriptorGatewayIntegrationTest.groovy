@@ -31,6 +31,7 @@ import org.springframework.data.mongodb.core.MongoOperations
 import org.springframework.data.mongodb.core.query.Query
 import org.springframework.http.HttpMethod
 import org.springframework.http.HttpStatus
+import org.springframework.http.MediaType
 import org.springframework.test.context.ContextConfiguration
 import spock.lang.Specification
 
@@ -72,40 +73,40 @@ class DescriptorGatewayIntegrationTest extends Specification implements Generati
         }
     }
 
-    def 'verify GET /descriptor/stacks'() {
+    def 'verify GET /descriptor/stacks (hypermedia)'() {
         given: 'a proper testing environment'
         assert port
 
         when: 'we GET /descriptor/stacks'
         def uri = buildURI( port, '/descriptor/stacks', [:] )
-        def response = template.exchange( uri, HttpMethod.GET, buildRequest(), HypermediaControl )
+        def response = template.exchange( uri, HttpMethod.GET, buildRequest( HypermediaControl.MEDIA_TYPE ), HypermediaControl )
 
         then: 'we get a proper response'
         HttpStatus.OK == response.statusCode
         response.body.stacks
     }
 
-    def 'verify GET /rundeck/stacks'() {
+    def 'verify GET /descriptor/stacks (json)'() {
         given: 'a proper testing environment'
         assert port
 
-        when: 'we GET /rundeck/stacks'
-        def uri = buildURI( port, '/rundeck/stacks', [:] )
-        def response = template.exchange( uri, HttpMethod.GET, buildRequest(), String )
+        when: 'we GET /descriptor/stacks'
+        def uri = buildURI( port, '/descriptor/stacks', [:] )
+        def response = template.exchange( uri, HttpMethod.GET, buildRequest( MediaType.APPLICATION_JSON_UTF8 ), String )
 
         then: 'we get a proper response'
         HttpStatus.OK == response.statusCode
         response.body
     }
 
-    def 'verify GET /descriptor/stack/{stack}'() {
+    def 'verify GET /descriptor/stack/{stack} (hypermedia)'() {
         given: 'a proper testing environment'
         assert port
 
         when: 'we GET /descriptor/stack/{stack}'
         def stack = fragments.first().stacks.first()
         def uri = buildURI( port, '/descriptor/stack/{stack}', [stack: stack] )
-        def response = template.exchange( uri, HttpMethod.GET, buildRequest(), HypermediaControl )
+        def response = template.exchange( uri, HttpMethod.GET, buildRequest( HypermediaControl.MEDIA_TYPE ), HypermediaControl )
 
         then: 'we get a proper response'
         HttpStatus.OK == response.statusCode
@@ -113,21 +114,21 @@ class DescriptorGatewayIntegrationTest extends Specification implements Generati
         response.body.releases
     }
 
-    def 'verify GET /rundeck/stack/{stack}'() {
+    def 'verify GET /descriptor/stack/{stack} (json)'() {
         given: 'a proper testing environment'
         assert port
 
-        when: 'we GET /rundeck/stack/{stack}'
+        when: 'we GET /descriptor/stack/{stack}'
         def stack = fragments.first().stacks.first()
-        def uri = buildURI( port, '/rundeck/stack/{stack}', [stack: stack] )
-        def response = template.exchange( uri, HttpMethod.GET, buildRequest(), String )
+        def uri = buildURI( port, '/descriptor/stack/{stack}', [stack: stack] )
+        def response = template.exchange( uri, HttpMethod.GET, buildRequest( MediaType.APPLICATION_JSON_UTF8 ), String )
 
         then: 'we get a proper response'
         HttpStatus.OK == response.statusCode
         response.body
     }
 
-    def 'verify GET /descriptor/stack/{stack}/{release}'() {
+    def 'verify GET /descriptor/stack/{stack}/{release} (hypermedia)'() {
         given: 'a proper testing environment'
         assert port
 
@@ -135,7 +136,7 @@ class DescriptorGatewayIntegrationTest extends Specification implements Generati
         def stack = fragments.first().stacks.first()
         def release = fragments.first().release
         def uri = buildURI( port, '/descriptor/stack/{stack}/{release}', [stack: stack, release: release] )
-        def response = template.exchange( uri, HttpMethod.GET, buildRequest(), HypermediaControl )
+        def response = template.exchange( uri, HttpMethod.GET, buildRequest( HypermediaControl.MEDIA_TYPE ), HypermediaControl )
 
         then: 'we get a proper response'
         HttpStatus.OK == response.statusCode
@@ -144,15 +145,15 @@ class DescriptorGatewayIntegrationTest extends Specification implements Generati
         response.body.versions
     }
 
-    def 'verify GET /rundeck/stack/{stack}/{release}'() {
+    def 'verify GET /descriptor/stack/{stack}/{release} (json)'() {
         given: 'a proper testing environment'
         assert port
 
-        when: 'we GET /rundeck/stack/{stack}/{release}'
+        when: 'we GET /descriptor/stack/{stack}/{release}'
         def stack = fragments.first().stacks.first()
         def release = fragments.first().release
-        def uri = buildURI( port, '/rundeck/stack/{stack}/{release}', [stack: stack, release: release] )
-        def response = template.exchange( uri, HttpMethod.GET, buildRequest(), String )
+        def uri = buildURI( port, '/descriptor/stack/{stack}/{release}', [stack: stack, release: release] )
+        def response = template.exchange( uri, HttpMethod.GET, buildRequest( MediaType.APPLICATION_JSON_UTF8 ), String )
 
         then: 'we get a proper response'
         HttpStatus.OK == response.statusCode
@@ -168,7 +169,7 @@ class DescriptorGatewayIntegrationTest extends Specification implements Generati
         def release = fragments.first().release
         def version = loadVersion( stack, release )
         def uri = buildURI( port, '/descriptor/stack/{stack}/{release}/{version}', [stack: stack, release: release, version: version] )
-        def response = template.exchange( uri, HttpMethod.GET, buildRequest(), HypermediaControl )
+        def response = template.exchange( uri, HttpMethod.GET, buildRequest( HypermediaControl.MEDIA_TYPE ), HypermediaControl )
 
         then: 'we get a proper response'
         HttpStatus.OK == response.statusCode
@@ -180,7 +181,7 @@ class DescriptorGatewayIntegrationTest extends Specification implements Generati
 
     Integer loadVersion( String stack, String release ) {
         def uri = buildURI( port, '/descriptor/stack/{stack}/{release}', [stack: stack, release: release] )
-        def response = template.exchange( uri, HttpMethod.GET, buildRequest(), HypermediaControl )
+        def response = template.exchange( uri, HttpMethod.GET, buildRequest( HypermediaControl.MEDIA_TYPE ), HypermediaControl )
         assert response.statusCode == HttpStatus.OK
         response.body.versions.first()
     }

@@ -18,6 +18,7 @@ package org.kurron.dcr.inbound
 
 import org.springframework.http.HttpEntity
 import org.springframework.http.HttpHeaders
+import org.springframework.http.MediaType
 import org.springframework.web.util.UriComponentsBuilder
 
 /**
@@ -40,10 +41,9 @@ trait RestCapable {
      * Constructs a request with only the proper headers filled in -- no body.
      * @return constructed request.
      */
-    HttpEntity buildRequest() {
+    HttpEntity buildRequest( MediaType mediaType ) {
         def headers = new HttpHeaders()
-        headers.setContentType( HypermediaControl.MEDIA_TYPE )
-        headers.setAccept( [HypermediaControl.MEDIA_TYPE] )
+        headers.setAccept( [mediaType] )
         new HttpEntity( headers )
     }
 
