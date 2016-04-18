@@ -54,7 +54,9 @@ security:
 
 # app specific properties
 dcr:
-  foo: default
+    serviceCode: ${name}
+    serviceInstance: \${random.int[1,65536]}
+    realm: development
 
 #---------- profile specific overrides ----------#
 
@@ -62,4 +64,4 @@ dcr:
 spring:
   profiles: bamboo
 dcr:
-  foo: bamboo
+    realm: bamboo

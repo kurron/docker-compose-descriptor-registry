@@ -34,6 +34,6 @@ class ApplicationIntegrationTest extends Specification {
 
     def 'verify context loads'() {
         expect: 'the configuration bean was injected'
-        'default' == configuration.foo
+        'development' == configuration.realm
     }
 }

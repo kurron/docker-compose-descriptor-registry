@@ -24,9 +24,19 @@ import org.springframework.boot.context.properties.ConfigurationProperties
 @ConfigurationProperties( value = 'dcr', ignoreUnknownFields = false )
 class ApplicationProperties {
 
-    /**
-     * This property controls...
-     */
-    String foo
 
+    /**
+     * Identifies this type of service. Used in logging.
+     */
+    String serviceCode
+
+    /**
+     * Identifies this instance of the service. Used in logging.
+     */
+    String serviceInstance
+
+    /**
+     * Logically groups a collection of services. Used in logging.
+     */
+    String realm
 }
