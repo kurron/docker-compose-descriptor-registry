@@ -17,6 +17,7 @@
 package org.kurron.dcr.inbound
 
 import static org.kurron.dcr.inbound.HypermediaControl.MIME_TYPE
+import static org.kurron.dcr.models.MessagingContext.RESOURCE_NOT_FOUND
 import static org.springframework.http.HttpStatus.OK
 import static org.springframework.http.MediaType.APPLICATION_JSON_VALUE
 import static org.springframework.web.bind.annotation.RequestMethod.GET
@@ -24,7 +25,6 @@ import groovy.transform.CompileDynamic
 import java.util.function.Supplier
 import javax.servlet.http.HttpServletRequest
 import org.kurron.categories.ByteArrayEnhancements
-import org.kurron.dcr.models.MessagingContext
 import org.kurron.stereotype.InboundRestGateway
 import org.springframework.http.ResponseEntity
 import org.springframework.web.bind.annotation.PathVariable
@@ -97,7 +97,7 @@ class DescriptorGateway extends BaseGateway {
         control.versions = [version]
 
         def optional = gateway.findOne( stack, release, version )
-        def error = { new ResourceNotFoundError( MessagingContext.RESOURCE_NOT_FOUND, extractPath( request ) ) } as Supplier<ResourceNotFoundError>
+        def error = { new ResourceNotFoundError( RESOURCE_NOT_FOUND, extractPath( request ) ) } as Supplier<ResourceNotFoundError>
         optional.orElseThrow( error )
 
         control.descriptor = use( ByteArrayEnhancements ) { ->
