@@ -17,7 +17,6 @@
 package org.kurron.dcr.inbound
 
 import static org.kurron.dcr.inbound.HypermediaControl.MIME_TYPE
-import static org.springframework.http.HttpStatus.NOT_FOUND
 import static org.springframework.http.HttpStatus.OK
 import static org.springframework.http.MediaType.APPLICATION_JSON_VALUE
 import static org.springframework.web.bind.annotation.RequestMethod.GET
@@ -96,15 +95,14 @@ class DescriptorGateway extends BaseGateway {
         control.stacks = [stack]
         control.releases = [release]
         control.versions = [version]
+
         def optional = gateway.findOne( stack, release, version )
         def error = { new ResourceNotFoundError( MessagingContext.RESOURCE_NOT_FOUND, extractPath( request ) ) } as Supplier<ResourceNotFoundError>
         optional.orElseThrow( error )
 
-        optional.ifPresent { descriptor ->
-            control.descriptor = use( ByteArrayEnhancements ) { ->
-                descriptor.descriptor.toStringBase64()
-            }
+        control.descriptor = use( ByteArrayEnhancements ) { ->
+            optional.get().descriptor.toStringBase64()
         }
-        new ResponseEntity<HypermediaControl>( control, optional.present ? OK : NOT_FOUND )
+        new ResponseEntity<HypermediaControl>( control, OK )
     }
 }
