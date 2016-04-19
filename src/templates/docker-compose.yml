@@ -8,7 +8,7 @@ services:
             org.kurron.version: "${version}"
         container_name: "${projectName}"
         network_mode: "host"
-            environment:
-                JVM_HEAP_MAX: 768m
-                JVM_JMX_HOST: 127.0.0.1
-                JVM_JMX_PORT: 2020
+        environment:
+            JVM_HEAP_MAX: 768m
+            JVM_JMX_HOST: 127.0.0.1
+            JVM_JMX_PORT: 2020
