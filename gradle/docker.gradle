@@ -24,6 +24,9 @@ task copyDockerfile( type: Copy, dependsOn: bootRepackage ) {
     expand( projectName: project.name, port: exposedPort, generated: new Date(), branch: branch, version: version, dockerRegistry: dockerRegistry , dockerAccount: dockerAccount)
 }
 
+// make sure we ALWAYS copy the templates over so that local publication works
+build.dependsOn copyDockerfile
+
 task copyBuildArtifact( type: Copy, dependsOn: [copyDockerfile] ) {
     def buildArtifactName = "${project.name}-${version}.jar"
     from( 'build/libs/' ) {
