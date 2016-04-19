@@ -24,6 +24,10 @@ buildscript {
     }
 }
 
+plugins {
+    id "com.jfrog.bintray" version "1.2"
+}
+
 description = 'Stores and assembles Docker Compose fragments'
 group = 'org.kurron'
 
@@ -47,6 +51,7 @@ apply from: "$rootDir/gradle/dependency-exclusions.gradle"
 apply from: "$rootDir/gradle/conflicts.gradle"
 apply from: "$rootDir/gradle/cucumber.gradle"
 apply from: "$rootDir/gradle/docker.gradle"
+apply from: "$rootDir/gradle/bintray.gradle"
 
 dependencies {
     compile "org.codehaus.groovy:groovy-all:${groovyVersion}:indy"
@@ -68,8 +73,9 @@ if ( 'true' == runIntegrationTests ) {
 
 // only publish artifacts if publishArtifacts is true, and the branch is either master or development
 if ( 'true' == publishArtifacts && branch in ['master', 'development'] ) {
-//  defaultTasks << 'publish'
-    defaultTasks << 'publishToMavenLocal'
+    // only use this if you decide not to use the Bintray plugin
+    // defaultTasks << 'publish'
+    defaultTasks << 'bintrayUpload'
     defaultTasks << 'publishDockerImage'
     // ensures that deleteDockerImage will not be executed until we publish, unless a failure occurs prior to publishing
     publishDockerImage.finalizedBy deleteDockerImage
