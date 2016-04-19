@@ -27,12 +27,14 @@ import org.springframework.boot.test.WebIntegrationTest
 import org.springframework.http.HttpMethod
 import org.springframework.http.HttpStatus
 import org.springframework.test.context.ContextConfiguration
+import spock.lang.Ignore
 import spock.lang.Specification
 
 /**
  * Learning test to see how easy it is to build download descriptors. Expect the database to already be
  * populated via populate-registry.groovy.
  */
+@Ignore
 @Category( InboundIntegrationTest )
 @WebIntegrationTest( randomPort = true )
 @ContextConfiguration( classes = Application, loader = SpringApplicationContextLoader )
