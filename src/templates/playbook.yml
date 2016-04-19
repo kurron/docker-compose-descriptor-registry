@@ -9,16 +9,6 @@
               ansible_ssh_pass={{ password }}
               ansible_sudo_pass={{ password }}
 
-  - name: Installing sshpass if necessary # sshpass allows for non-interactive SSH password authentication and is required by Ansible
-#    sudo: yes # Does not work on Bamboo, passwordless sudo not set up for testdeploy user
-    apt: name=sshpass state=present
-
-  - name: Creating .ssh directory if necessary
-    file: dest=~/.ssh state=directory
-
-  - name: Adding the destination host's public key to ssh known hosts
-    shell: ssh-keyscan -H {{ server }} >> ~/.ssh/known_hosts
-
 - hosts: destination_host
   become: no
 
