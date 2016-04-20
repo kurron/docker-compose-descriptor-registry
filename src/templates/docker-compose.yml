@@ -13,6 +13,7 @@ services:
         links:
         - mongodb:mongodb
         labels:
+            org.kurron.service: "${projectName}"
             org.kurron.built-on: "${generated}"
             org.kurron.branch: "${branch}"
             org.kurron.version: "${version}"

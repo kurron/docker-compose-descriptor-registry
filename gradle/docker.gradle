@@ -46,9 +46,9 @@ task buildDockerImage( type: Exec, dependsOn: copyBuildArtifact ) {
     group 'Docker'
     description = 'Builds a docker image'
     workingDir dockerDirectory
-    commandLine 'docker-compose', 'build', project.name
     doFirst {
         logger.quiet "Building docker image $fullImageName based on the Dockerfile in $dockerDirectory/"
+        commandLine 'docker-compose', 'build', project.name
     }
 }
 
@@ -57,9 +57,9 @@ task tagDockerImage( type: Exec, dependsOn: buildDockerImage ) {
     description = 'Tags the built docker image'
     workingDir dockerDirectory
     def untagged = "docker_${project.name}"
-    commandLine 'docker', 'tag', untagged, fullImageName
     doFirst {
         logger.quiet "Tagging $untagged to be $fullImageName/"
+        commandLine 'docker', 'tag', untagged, fullImageName
     }
 }
 
@@ -67,42 +67,53 @@ task publishDockerImage( type: Exec, dependsOn: tagDockerImage ) {
     group 'Docker'
     description = 'Publishes a previously built docker image to the private docker registry'
     workingDir dockerDirectory
-    commandLine 'docker', 'push', fullImageName
     doFirst {
         logger.quiet "Publishing docker image $fullImageName to $dockerRegistry"
+        commandLine 'docker', 'push', fullImageName
     }
 }
 
-task deleteDockerContainer( type: Exec ) {
+task deleteDockerComposeAssets( type: Exec ) {
     group 'Docker'
-    description = 'Deletes a docker container, even if it is running'
-    commandLine 'docker', 'rm', '-f', containerName
+    description = 'Deletes Docker containers started by Docker Compose as well as images'
+    workingDir dockerDirectory
     doFirst {
-        logger.quiet "Deleting docker container $containerName from the host"
+        logger.quiet "Cleaning up Docker containers and networks."
+        commandLine 'docker-compose', 'down', '--rmi', 'all'
     }
 }
 
-task deleteDockerImage( type: Exec, dependsOn: [deleteDockerContainer] ) {
+task deleteDockerImage( type: Exec, dependsOn: [deleteDockerComposeAssets] ) {
     group 'Docker'
-    description = 'Deletes a docker image'
-    commandLine 'docker', 'rmi', fullImageName
+    description = 'Deletes Docker containers started by Docker Compose as well as images'
+    workingDir dockerDirectory
     doFirst {
-        logger.quiet "Deleting docker image $fullImageName from the host"
+        logger.quiet "Cleaning up Docker image ${fullImageName}."
+        commandLine 'docker', 'rmi', fullImageName
     }
 }
 
 task launchContainer( type: Exec, dependsOn: buildDockerImage ) {
     group 'Docker'
-    description = 'Runs an Ansible playbook that will launch the container for testing'
+    description = 'Launches the container for testing'
 
-    def ansibleVars = toJsonEnvironmentDescriptor( version.toString() )
-    commandLine ansiblePlaybookPath, "$projectDir/build/docker/playbook.yml", '--inventory', '127.0.0.1,', '--extra-vars', ansibleVars
+    workingDir dockerDirectory
     doFirst {
-        logger.quiet "Running the Ansible deployment playbook to run container $containerName based on image $fullImageName"
+        logger.quiet "Running Docker Compose to start the container for testing"
+        commandLine 'docker-compose', 'up', '-d'
+        // in case the build box has to pull down images, we wait
+        Thread.sleep( 1000 * 30 )
     }
     doLast {
+        // find the id of the container
+        def ps = "docker ps --filter label=org.kurron.service=${project.name} --quiet"
+        logger.quiet "Executing ${ps}"
+        def psProcess = ps.execute()
+        def containerId = psProcess.text
+        logger.quiet "Command result is ${containerId}"
+
         // ask for the HTTP port only
-        def command = "docker port $containerName 8080/tcp"
+        def command = "docker port ${containerId} 8080/tcp"
         logger.quiet "Executing ${command}"
         def process = command.execute()
         def commandResult = process.text
@@ -113,6 +124,7 @@ task launchContainer( type: Exec, dependsOn: buildDockerImage ) {
         waitForServerToStart( port )
     }
 }
+
 
 private String toJsonEnvironmentDescriptor( String tag ) {
     def activeProfile = System.properties.getProperty( 'spring.profiles.active', 'default' ) as String
