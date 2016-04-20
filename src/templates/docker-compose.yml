@@ -1,19 +1,29 @@
+# Intended to build and run the container during the acceptance testing phase
 version: '2'
 services:
+    mongodb:
+        image: mongo:latest
+        expose:
+        - "27017"
+
     ${projectName}:
-        image: "${dockerRegistry}/${dockerAccount}/${projectName}:${version}"
+        build: .
+        depends_on:
+        - mongodb
+        links:
+        - mongodb:mongodb
         labels:
             org.kurron.built-on: "${generated}"
             org.kurron.branch: "${branch}"
             org.kurron.version: "${version}"
-        container_name: "${projectName}"
-        network_mode: "host"
+        ports:
+        - "8080"
         environment:
             JVM_HEAP_MAX: 128m
             JVM_JMX_HOST: 127.0.0.1
             JVM_JMX_PORT: 2020
+            SPRING_DATA_MONGODB_HOST: mongodb
         cpu_shares: 0
         cpu_quota: 0
         mem_limit: 256m
         memswap_limit: 256m
-        shm_size: 64M
