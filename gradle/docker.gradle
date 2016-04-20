@@ -13,8 +13,6 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-import groovy.json.JsonBuilder
-
 def fullImageName = "${dockerRegistry}/${dockerAccount}/${project.name}:${version}"
 def containerName = project.name
 
@@ -85,7 +83,7 @@ task deleteDockerComposeAssets( type: Exec ) {
 
 task deleteDockerImage( type: Exec, dependsOn: [deleteDockerComposeAssets] ) {
     group 'Docker'
-    description = 'Deletes Docker containers started by Docker Compose as well as images'
+    description = 'Deletes Docker images not controlled by Docker Compose'
     workingDir dockerDirectory
     doFirst {
         logger.quiet "Cleaning up Docker image ${fullImageName}."
@@ -123,16 +121,6 @@ task launchContainer( type: Exec, dependsOn: buildDockerImage ) {
         System.setProperty( 'integration.test.port', port.toString() )
         waitForServerToStart( port )
     }
-}
-
-
-private String toJsonEnvironmentDescriptor( String tag ) {
-    def activeProfile = System.properties.getProperty( 'spring.profiles.active', 'default' ) as String
-    new JsonBuilder( [server: 'localhost',
-                      user: ansibleSshUser,
-                      password: ansibleSshPassword,
-                      tag: tag,
-                      spring_profiles: activeProfile] ).toString()
 }
 
 private void waitForServerToStart( int port ) {
