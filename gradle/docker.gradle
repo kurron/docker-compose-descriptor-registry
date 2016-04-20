@@ -46,13 +46,24 @@ task buildDockerImage( type: Exec, dependsOn: copyBuildArtifact ) {
     group 'Docker'
     description = 'Builds a docker image'
     workingDir dockerDirectory
-    commandLine 'docker', 'build', '--tag', fullImageName, '--pull', '.'
+    commandLine 'docker-compose', 'build', project.name
     doFirst {
         logger.quiet "Building docker image $fullImageName based on the Dockerfile in $dockerDirectory/"
     }
 }
 
-task publishDockerImage( type: Exec, dependsOn: buildDockerImage ) {
+task tagDockerImage( type: Exec, dependsOn: buildDockerImage ) {
+    group 'Docker'
+    description = 'Tags the built docker image'
+    workingDir dockerDirectory
+    def untagged = "docker_${project.name}"
+    commandLine 'docker', 'tag', untagged, fullImageName
+    doFirst {
+        logger.quiet "Tagging $untagged to be $fullImageName/"
+    }
+}
+
+task publishDockerImage( type: Exec, dependsOn: tagDockerImage ) {
     group 'Docker'
     description = 'Publishes a previously built docker image to the private docker registry'
     workingDir dockerDirectory
